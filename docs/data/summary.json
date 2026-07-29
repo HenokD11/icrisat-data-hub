@@ -5,9 +5,9 @@
     "published": 1
   },
   "by_file_type": {
-    "word": 1,
     "excel": 1,
-    "csv": 1
+    "csv": 1,
+    "word": 1
   },
   "by_team": {
     "unspecified": 2,
