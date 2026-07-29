@@ -1,0 +1,17 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Runtime data (local working state — not for the repo)
+data/inbox/*
+!data/inbox/.gitkeep
+data/processed/
+data/failed/
+data/catalog/catalog.db
+
+# OS / editor
+Thumbs.db
+desktop.ini
+.vscode/

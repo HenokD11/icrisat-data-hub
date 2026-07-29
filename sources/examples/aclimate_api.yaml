@@ -1,0 +1,19 @@
+id: aclimate-ethiopia-api
+title: AClimate Ethiopia — seasonal forecast & advisory API
+description: >
+  ACLIMATE Web API used by the iSAT climate information services PoC,
+  aligned with the national EDaCAP / Digital AgroClimate Advisory Platform.
+  Provides seasonal forecasts, climatology, and crop advisories for Ethiopia.
+type: api
+format: json
+url: https://aclimate.org/api
+access: internal
+update_frequency: monthly
+owner:
+  team: Climate Services
+  contact: climate-team@icrisat.org
+hub_role: federation
+tags: [seasonal-forecast, advisory, ethiopia, climate-services]
+spatial_coverage: Ethiopia
+temporal_coverage: rolling seasonal forecasts
+auth_env_var: ACLIMATE_API_KEY   # set this env var locally; never commit keys

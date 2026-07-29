@@ -1,0 +1,19 @@
+id: chirps-rainfall-africa
+title: CHIRPS daily rainfall (Africa)
+description: >
+  Climate Hazards Group InfraRed Precipitation with Station data —
+  quasi-global 0.05 degree daily rainfall estimates, 1981 to near-present.
+  Shared upstream input for many ICRISAT climate analytics pipelines.
+type: remote_dataset
+format: geotiff
+url: https://data.chc.ucsb.edu/products/CHIRPS-2.0/
+access: open
+update_frequency: daily
+owner:
+  team: Climate Services
+  contact: climate-team@icrisat.org
+license: "Public domain (UCSB CHG)"
+hub_role: federation
+tags: [rainfall, climate, hazard, shared-input]
+spatial_coverage: Africa (quasi-global 50S-50N available)
+temporal_coverage: 1981-present

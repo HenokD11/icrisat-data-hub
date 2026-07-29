@@ -1,0 +1,59 @@
+# ICRISAT Data Hub — main configuration
+hub:
+  name: "ICRISAT Data Hub"
+  organisation: "ICRISAT"
+  version: "0.1.0"
+
+# Paths are relative to the project root (the folder containing config/)
+paths:
+  inbox: "data/inbox"            # teams drop files here — watched automatically
+  processed: "data/processed"    # successfully ingested files (organised by team/month)
+  failed: "data/failed"          # files that failed ingestion (+ .error.txt)
+  catalog_db: "data/catalog/catalog.db"
+  catalog_json: "data/catalog/assets.json"   # exported catalogue (like CDH assets.json)
+  sources_dir: "sources"         # YAML pointers to external / federated sources
+
+ingest:
+  # File types the pipeline accepts (phase 1)
+  supported_extensions: [".csv", ".xlsx", ".xls", ".docx"]
+  # Maximum rows held in a preview/sample
+  preview_rows: 20
+  # Sample values stored per column in the catalogue profile
+  column_sample_values: 5
+  # Max characters of extracted Word text stored in the catalogue
+  doc_text_chars: 20000
+  # Seconds to wait after a file appears before ingesting (lets copies finish)
+  settle_seconds: 2.0
+  # What happens to a file after successful ingestion: move | keep
+  after_ingest: "move"
+
+# Controlled vocabularies (extend freely — used for normalisation hints)
+vocabulary:
+  domains:
+    - Hazard
+    - Hazard / Climate Services
+    - Exposure
+    - Sensitivity
+    - Adaptive Capacity
+    - Adaptation Analytics
+    - Mitigation
+    - Soil / Agronomy
+    - Socio-economics
+    - Multi-domain
+  access:
+    - open
+    - internal
+    - restricted
+  hub_role:
+    - federation
+    - ingest
+    - derived
+    - reference
+
+web:
+  host: "0.0.0.0"
+  port: 8010
+
+mcp:
+  http_host: "0.0.0.0"
+  http_port: 8100
