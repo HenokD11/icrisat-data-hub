@@ -54,7 +54,7 @@ def _slim(asset: dict[str, Any]) -> dict[str, Any]:
     keys = (
         "asset_id", "title", "description", "team", "owner", "file_name",
         "file_type", "status", "tags", "access", "domain",
-        "spatial_coverage", "temporal_coverage", "created_at",
+        "spatial_coverage", "temporal_coverage", "upload_channel", "created_at",
     )
     return {k: asset.get(k) for k in keys}
 

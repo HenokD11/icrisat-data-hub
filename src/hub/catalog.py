@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS assets (
     hub_role        TEXT,
     spatial_coverage TEXT,
     temporal_coverage TEXT,
+    upload_channel  TEXT,                   -- inbox | web | sidecar
     missing_fields  TEXT,                   -- JSON array of metadata gaps
     ingest_log      TEXT,
     created_at      TEXT NOT NULL,
@@ -95,6 +96,14 @@ class Catalog:
     def _init_db(self) -> None:
         with self.connect() as conn:
             conn.executescript(SCHEMA)
+            self._migrate(conn)
+
+    @staticmethod
+    def _migrate(conn: sqlite3.Connection) -> None:
+        """Add columns introduced after the initial schema (idempotent)."""
+        cols = {r["name"] for r in conn.execute("PRAGMA table_info(assets)")}
+        if "upload_channel" not in cols:
+            conn.execute("ALTER TABLE assets ADD COLUMN upload_channel TEXT")
 
     # ------------------------------------------------------------------ write
     def has_hash(self, sha256: str) -> bool:
@@ -117,9 +126,9 @@ class Catalog:
                     asset_id, title, description, team, owner, contact,
                     file_name, file_path, file_type, file_ext, size_bytes,
                     sha256, status, tags, license, access, domain, hub_role,
-                    spatial_coverage, temporal_coverage, missing_fields,
-                    ingest_log, created_at, updated_at
-                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                    spatial_coverage, temporal_coverage, upload_channel,
+                    missing_fields, ingest_log, created_at, updated_at
+                ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """,
                 (
                     asset_id,
@@ -142,6 +151,7 @@ class Catalog:
                     asset.get("hub_role"),
                     asset.get("spatial_coverage"),
                     asset.get("temporal_coverage"),
+                    asset.get("upload_channel"),
                     json.dumps(missing),
                     asset.get("ingest_log"),
                     now,
@@ -284,6 +294,7 @@ class Catalog:
                 "by_file_type": count_by("file_type"),
                 "by_team": count_by("team"),
                 "by_access": count_by("access"),
+                "by_upload_channel": count_by("upload_channel"),
                 "needs_review": conn.execute(
                     "SELECT COUNT(*) AS n FROM assets WHERE status = 'needs_review'"
                 ).fetchone()["n"],

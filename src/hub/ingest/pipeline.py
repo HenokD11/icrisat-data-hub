@@ -95,9 +95,19 @@ def ingest_file(
 
     # Metadata: sidecar < web-form metadata < inference (first non-empty wins).
     metadata: dict[str, Any] = meta.infer_metadata(file_path, tables)
+    sidecar_exists = file_path.with_name(f"{file_path.stem}{meta.SIDECAR_SUFFIX}").exists()
     metadata.update(meta.load_sidecar_metadata(file_path))
     if extra_metadata:
         metadata.update({k: v for k, v in extra_metadata.items() if v})
+
+    # How the file arrived — powers the dashboard's upload-ease view.
+    if extra_metadata:
+        upload_channel = "web"
+    elif sidecar_exists:
+        upload_channel = "sidecar"
+    else:
+        upload_channel = "inbox"
+    metadata["upload_channel"] = upload_channel
 
     profiled = profile_tables(tables, cfg)
 

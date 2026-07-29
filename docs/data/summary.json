@@ -17,9 +17,13 @@
     "unspecified": 2,
     "internal": 1
   },
+  "by_upload_channel": {
+    "inbox": 2,
+    "sidecar": 1
+  },
   "needs_review": 2,
   "hub": "ICRISAT Data Hub",
-  "generated_at": "2026-07-29T07:15:05+00:00",
+  "generated_at": "2026-07-29T07:19:37+00:00",
   "domain_definitions": {
     "Hazard": "Climate variables and indices that characterise physical hazard (rainfall, temperature, drought, flood extent).",
     "Hazard / Climate Services": "Operationally processed hazard products delivered as services (seasonal forecasts, advisories).",

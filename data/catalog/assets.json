@@ -1,6 +1,6 @@
 {
   "hub": "ICRISAT Data Hub",
-  "generated_at": "2026-07-29T06:48:24+00:00",
+  "generated_at": "2026-07-29T07:19:37+00:00",
   "n_assets": 3,
   "assets": [
     {
@@ -33,6 +33,7 @@
       "ingest_log": "Ingested 2026-07-29T09:33:57",
       "created_at": "2026-07-29T06:33:57+00:00",
       "updated_at": "2026-07-29T06:33:57+00:00",
+      "upload_channel": "sidecar",
       "tables": [
         {
           "table_id": "tbl_6dc44581cb37",
@@ -158,6 +159,7 @@
       "ingest_log": "Ingested 2026-07-29T09:33:55",
       "created_at": "2026-07-29T06:33:55+00:00",
       "updated_at": "2026-07-29T06:33:55+00:00",
+      "upload_channel": "inbox",
       "tables": [
         {
           "table_id": "tbl_2d5d2b0cb2d2",
@@ -254,6 +256,7 @@
       "ingest_log": "Ingested 2026-07-29T09:33:54",
       "created_at": "2026-07-29T06:33:54+00:00",
       "updated_at": "2026-07-29T06:33:54+00:00",
+      "upload_channel": "inbox",
       "tables": [
         {
           "table_id": "tbl_8b4989a32928",
