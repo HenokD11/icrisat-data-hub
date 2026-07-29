@@ -4,71 +4,249 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ICRISAT Data Hub — Catalogue</title>
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <style>
-  :root { --blue: #2c5f9e; --green: #2e7d52; --amber: #b07d2b; --grey: #667085; }
+  :root {
+    --green: #0E7E44; --green-dark: #0A5C32; --green-tint: #E7F4EC;
+    --orange: #F58B31; --orange-tint: #FDF0E3;
+    --ink: #1A1A1A; --grey: #667085; --line: #E4E7EC; --bg: #F9FAFB;
+  }
   * { box-sizing: border-box; }
-  body { font-family: system-ui, -apple-system, sans-serif; margin: 0; color: #1a1a1a; background: #fafbfc; }
-  header { background: var(--blue); color: #fff; padding: 1.2rem 2rem; }
-  header h1 { margin: 0; font-size: 1.3rem; }
-  header p { margin: .2rem 0 0; opacity: .85; font-size: .85rem; }
-  main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .8rem; margin-bottom: 1.4rem; }
-  .card { background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; padding: .9rem 1rem; }
-  .card .num { font-size: 1.7rem; font-weight: 700; }
-  .card .lbl { font-size: .75rem; color: var(--grey); text-transform: uppercase; letter-spacing: .04em; }
-  .controls { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem; }
-  .controls input, .controls select { padding: .45rem .6rem; border: 1px solid #cbd2d9; border-radius: 6px; font-size: .9rem; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; color: var(--ink); background: var(--bg); }
+  a { color: var(--green); }
+  code { background: #F2F4F7; padding: .1rem .35rem; border-radius: 4px; font-size: .85em; }
+  pre { background: #101828; color: #E4E7EC; padding: .9rem 1rem; border-radius: 8px; overflow-x: auto; font-size: .8rem; }
+
+  /* header */
+  .topbar { background: #fff; border-bottom: 3px solid var(--orange); position: sticky; top: 0; z-index: 10;
+            display: flex; align-items: center; gap: 1rem; padding: .55rem 1.5rem; }
+  .topbar img { height: 44px; }
+  .topbar .title { font-weight: 700; font-size: 1.05rem; color: var(--green-dark); }
+  .topbar nav { margin-left: auto; display: flex; gap: 1.1rem; font-size: .88rem; font-weight: 600; }
+  .topbar nav a { color: var(--green); text-decoration: none; }
+  .topbar nav a:hover { color: var(--orange); }
+
+  /* hero */
+  .hero { background: linear-gradient(120deg, var(--green-dark), var(--green)); color: #fff; padding: 2.2rem 1.5rem 1.8rem; }
+  .hero .inner { max-width: 1100px; margin: 0 auto; }
+  .hero h1 { margin: 0 0 .4rem; font-size: 1.6rem; }
+  .hero p { margin: 0 0 1.3rem; opacity: .92; max-width: 720px; font-size: .95rem; }
+  .chips { display: flex; flex-wrap: wrap; gap: .6rem; }
+  .chip { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); border-radius: 999px;
+          padding: .35rem .9rem; font-size: .85rem; }
+  .chip b { font-size: 1rem; }
+  .stamp { margin-top: 1rem; font-size: .75rem; opacity: .75; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 1.8rem 1.2rem; }
+  section { margin-bottom: 2.6rem; }
+  h2 { font-size: 1.15rem; color: var(--green-dark); border-left: 4px solid var(--orange); padding-left: .6rem; margin: 0 0 .3rem; }
+  .lede { color: var(--grey); font-size: .88rem; margin: .2rem 0 1rem; }
+
+  /* audience cards */
+  .aud { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: .9rem; }
+  .aud .card { background: #fff; border: 1px solid var(--line); border-top: 3px solid var(--green); border-radius: 8px; padding: 1rem 1.1rem; }
+  .aud .card h3 { margin: 0 0 .4rem; font-size: .95rem; color: var(--green-dark); }
+  .aud .card p, .aud .card li { font-size: .84rem; color: #444; }
+  .aud .card ul { margin: .4rem 0 0; padding-left: 1.1rem; }
+  .aud .card p { margin: .3rem 0; }
+
+  /* charts */
+  .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; }
+  .chart-card { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: .9rem 1rem; }
+  .chart-card h3 { margin: 0 0 .6rem; font-size: .85rem; color: var(--grey); text-transform: uppercase; letter-spacing: .05em; }
+  .chart-card .box { position: relative; height: 230px; }
+
+  /* table */
+  .controls { display: flex; flex-wrap: wrap; gap: .55rem; margin-bottom: .9rem; }
+  .controls input, .controls select { padding: .45rem .6rem; border: 1px solid #CBD2D9; border-radius: 6px; font-size: .87rem; background: #fff; }
   .controls input[type=search] { flex: 1; min-width: 220px; }
-  table { border-collapse: collapse; width: 100%; background: #fff; font-size: .85rem; }
-  th, td { border: 1px solid #e4e7ec; padding: .45rem .6rem; text-align: left; vertical-align: top; }
-  th { background: #f2f4f7; cursor: pointer; user-select: none; white-space: nowrap; }
-  th:hover { background: #e9edf2; }
-  tr:hover td { background: #f8fafc; }
-  .badge { display: inline-block; padding: .1rem .5rem; border-radius: 999px; font-size: .72rem; font-weight: 600; }
-  .b-pub { background: #e9f7ef; color: var(--green); border: 1px solid #a7d7bd; }
-  .b-rev { background: #fdf4e7; color: var(--amber); border: 1px solid #eccf9e; }
-  .tag { display: inline-block; background: #eef2f8; color: #34486b; border-radius: 4px; padding: 0 .35rem; font-size: .72rem; margin: .05rem; }
-  details summary { cursor: pointer; color: var(--blue); font-size: .8rem; }
-  .schema { font-size: .78rem; color: #444; background: #f8fafc; border-radius: 6px; padding: .5rem .7rem; margin-top: .4rem; }
-  .schema b { color: #1a1a1a; }
-  h2 { font-size: 1.05rem; margin-top: 2rem; }
-  .src { background: #fff; border: 1px solid #e4e7ec; border-radius: 8px; padding: .8rem 1rem; margin-bottom: .6rem; }
-  .src a { color: var(--blue); word-break: break-all; }
-  .muted { color: var(--grey); font-size: .8rem; }
-  footer { text-align: center; color: var(--grey); font-size: .78rem; padding: 2rem 0; }
+  .controls input:focus, .controls select:focus { outline: 2px solid var(--green); outline-offset: -1px; }
+  .tablewrap { background: #fff; border: 1px solid var(--line); border-radius: 8px; overflow: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .84rem; }
+  th, td { border-bottom: 1px solid var(--line); padding: .5rem .65rem; text-align: left; vertical-align: top; }
+  th { background: var(--green-tint); color: var(--green-dark); cursor: pointer; user-select: none; white-space: nowrap; position: sticky; top: 0; }
+  th:hover { background: #D5EBDD; }
+  tr:hover td { background: #F8FBF9; }
+  .badge { display: inline-block; padding: .12rem .55rem; border-radius: 999px; font-size: .71rem; font-weight: 700; }
+  .b-pub { background: var(--green-tint); color: var(--green-dark); border: 1px solid #A9D6BC; }
+  .b-rev { background: var(--orange-tint); color: #B25E09; border: 1px solid #F2C496; }
+  .tag { display: inline-block; background: #EFF4EF; color: #2F5233; border-radius: 4px; padding: 0 .35rem; font-size: .71rem; margin: .05rem; }
+  details summary { cursor: pointer; color: var(--green); font-size: .79rem; font-weight: 600; }
+  .schema { font-size: .77rem; color: #444; background: #F8FAF9; border: 1px solid var(--line); border-radius: 6px; padding: .5rem .7rem; margin-top: .4rem; }
+  .schema b { color: var(--ink); }
+  .muted { color: var(--grey); font-size: .79rem; }
+
+  /* domains */
+  .domdefs { background: #fff; border: 1px solid var(--line); border-radius: 8px; overflow: auto; }
+  .domdefs td:first-child { font-weight: 700; color: var(--green-dark); white-space: nowrap; }
+
+  /* sources */
+  .src { background: #fff; border: 1px solid var(--line); border-left: 3px solid var(--orange); border-radius: 8px; padding: .8rem 1rem; margin-bottom: .6rem; }
+  .src a { word-break: break-all; }
+  .src p { margin: .3rem 0 0; font-size: .82rem; color: #444; }
+
+  /* access / reproduce */
+  .twocol { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+  .panel { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; }
+  .panel h3 { margin: 0 0 .5rem; font-size: .92rem; color: var(--green-dark); }
+  .panel p, .panel li { font-size: .83rem; color: #444; }
+  .panel ul { margin: .4rem 0 0; padding-left: 1.1rem; }
+
+  footer { background: var(--green-dark); color: #fff; padding: 1.4rem 1.5rem; margin-top: 2rem; }
+  footer .inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+  footer img { height: 38px; background: #fff; border-radius: 6px; padding: 3px 8px; }
+  footer .note { font-size: .78rem; opacity: .9; }
+  footer a { color: #FFD9B0; }
 </style>
 </head>
 <body>
-<header>
-  <h1 id="hub-name">ICRISAT Data Hub</h1>
-  <p>Catalogue of shared team datasets and federated external sources ·
-     <a style="color:#fff" href="https://github.com/">repository</a></p>
-</header>
-<main>
-  <div class="cards" id="cards"></div>
 
-  <h2>Assets <span class="muted" id="asset-count"></span></h2>
+<div class="topbar">
+  <img src="assets/icrisat-logo.png" alt="ICRISAT logo">
+  <span class="title">Data Hub</span>
+  <nav>
+    <a href="#audiences">Who it's for</a>
+    <a href="#overview">Overview</a>
+    <a href="#catalogue">Catalogue</a>
+    <a href="#sources">Sources</a>
+    <a href="#access">Data access</a>
+    <a href="https://github.com/HenokD11/icrisat-data-hub">GitHub</a>
+  </nav>
+</div>
+
+<div class="hero">
+  <div class="inner">
+    <h1 id="hub-name">ICRISAT Data Hub</h1>
+    <p>A federation-first catalogue of ICRISAT team datasets and external data sources.
+       Teams contribute CSV, Excel, and Word files with no special skills; the pipeline
+       catalogues them automatically; LLMs access everything through the hub's MCP server.</p>
+    <div class="chips" id="chips"></div>
+    <div class="stamp" id="stamp"></div>
+  </div>
+</div>
+
+<main>
+
+<section id="audiences">
+  <h2>Who this hub is for</h2>
+  <p class="lede">Three audiences, three entry points — same catalogue underneath.</p>
+  <div class="aud">
+    <div class="card">
+      <h3>Teams contributing data</h3>
+      <p>Drop files into the shared inbox folder or use the upload web page — no special
+         skills, no database, no code. The pipeline reads, profiles, and catalogues
+         automatically, and flags anything it couldn't infer for a quick review.</p>
+      <ul><li>CSV, Excel (.xlsx/.xls), Word (.docx)</li>
+          <li>Optional sidecar <code>.meta.yaml</code> for full metadata</li>
+          <li>Incomplete uploads get a pre-filled review template</li></ul>
+    </div>
+    <div class="card">
+      <h3>Analysts finding data</h3>
+      <p>Browse the catalogue below: search titles, descriptions, column names, tags, and
+         document text; filter by team, type, and status; expand any asset to inspect
+         every sheet's schema before you download anything.</p>
+      <ul><li>Raw catalogue: <a href="data/assets.json">assets.json</a></li>
+          <li>Federated pointers: <a href="data/sources.json">sources.json</a></li></ul>
+    </div>
+    <div class="card">
+      <h3>LLM agents (MCP)</h3>
+      <p>The hub speaks MCP: agents can discover datasets, inspect schemas, preview and
+         query tables (read-only SQL), and read documents.</p>
+      <ul><li>stdio for local agents; streamable HTTP for the network</li>
+          <li>Tools: list, search, get, preview, query, read, sources, summary</li></ul>
+    </div>
+  </div>
+</section>
+
+<section id="overview">
+  <h2>Portfolio overview</h2>
+  <p class="lede">Volume and coverage of the catalogued portfolio — every figure computed
+     from the catalogue, nothing hand-typed.</p>
+  <div class="charts">
+    <div class="chart-card"><h3>Assets per team</h3><div class="box"><canvas id="c-team"></canvas></div></div>
+    <div class="chart-card"><h3>By file type</h3><div class="box"><canvas id="c-type"></canvas></div></div>
+    <div class="chart-card"><h3>Catalogue status</h3><div class="box"><canvas id="c-status"></canvas></div></div>
+    <div class="chart-card"><h3>Access level</h3><div class="box"><canvas id="c-access"></canvas></div></div>
+  </div>
+</section>
+
+<section id="domains">
+  <h2>Domain definitions</h2>
+  <p class="lede">Controlled vocabulary used to classify assets, following the CGIAR
+     climate-domain vocabulary.</p>
+  <div class="domdefs"><table id="domtbl"><tbody></tbody></table></div>
+</section>
+
+<section id="catalogue">
+  <h2>Asset catalogue <span class="muted" id="asset-count"></span></h2>
+  <p class="lede">The full inventory. Click a column header to sort; expand a row's
+     details to inspect the schema of every sheet or the document outline.</p>
   <div class="controls">
-    <input type="search" id="q" placeholder="Search title, description, column names, tags…">
-    <select id="f-status"><option value="">status: all</option><option>published</option><option>needs_review</option></select>
-    <select id="f-type"><option value="">type: all</option><option>csv</option><option>excel</option><option>word</option></select>
+    <input type="search" id="q" placeholder="Search title, description, column names, tags, document text…">
+    <select id="f-status"><option value="">status: all</option><option value="published">published</option><option value="needs_review">needs review</option></select>
+    <select id="f-type"><option value="">type: all</option><option value="csv">csv</option><option value="excel">excel</option><option value="word">word</option></select>
     <select id="f-team"><option value="">team: all</option></select>
   </div>
-  <table id="tbl">
-    <thead><tr>
-      <th data-k="title">title</th><th data-k="team">team</th><th data-k="file_type">type</th>
-      <th data-k="status">status</th><th data-k="tags">tags</th><th>details</th>
-    </tr></thead>
-    <tbody></tbody>
-  </table>
+  <div class="tablewrap">
+    <table id="tbl">
+      <thead><tr>
+        <th data-k="title">title</th><th data-k="team">team</th><th data-k="file_type">type</th>
+        <th data-k="status">status</th><th data-k="access">access</th><th data-k="tags">tags</th><th>details</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
 
+<section id="sources">
   <h2>Federated sources <span class="muted" id="src-count"></span></h2>
-  <p class="muted">External datasets/APIs registered as YAML pointers — the hub points to these rather than hosting copies.</p>
-  <div id="sources"></div>
+  <p class="lede">External datasets and APIs registered as YAML pointers — the hub points
+     to data where it lives rather than hosting copies (federation-first).</p>
+  <div id="sources-list"></div>
+</section>
+
+<section id="access">
+  <h2>Data access and reproducibility</h2>
+  <p class="lede">This page is generated programmatically: every figure and count is
+     computed from the normalised catalogue, with no hand-typed numbers.</p>
+  <div class="twocol">
+    <div class="panel">
+      <h3>Data</h3>
+      <ul>
+        <li>Full catalogue: <a href="data/assets.json"><code>docs/data/assets.json</code></a></li>
+        <li>Portfolio statistics: <a href="data/summary.json"><code>docs/data/summary.json</code></a></li>
+        <li>Federated pointers: <a href="data/sources.json"><code>docs/data/sources.json</code></a></li>
+        <li>Repository: <a href="https://github.com/HenokD11/icrisat-data-hub">HenokD11/icrisat-data-hub</a></li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>Reproduce</h3>
+      <pre>pip install -r requirements.txt
+python -m hub.ingest.pipeline --scan   # inbox -> catalogue
+python -m hub.pages                    # catalogue -> docs/data/*.json</pre>
+      <p>A GitHub Action re-runs the export automatically whenever the catalogue
+         or YAML pointers change on <code>main</code>.</p>
+    </div>
+  </div>
+</section>
+
 </main>
-<footer>Generated programmatically from <code>docs/data/*.json</code> — no hand-typed numbers. · <span id="gen"></span></footer>
+
+<footer>
+  <div class="inner">
+    <img src="assets/icrisat-logo.png" alt="ICRISAT">
+    <span class="note">
+      ICRISAT Data Hub — catalogue generated <span id="gen"></span>.<br>
+      Feedback, corrections, or a dataset to register?
+      <a href="https://github.com/HenokD11/icrisat-data-hub/issues/new">Open an issue</a>.
+    </span>
+  </div>
+</footer>
 
 <script>
+const GREEN = '#0E7E44', GREEN_DARK = '#0A5C32', ORANGE = '#F58B31';
+const PALETTE = ['#0E7E44', '#F58B31', '#3D9B6A', '#F8AD6B', '#7BC49A', '#FBC894', '#2F5233', '#98A2B3'];
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let assets = [], sortKey = 'title', sortDir = 1;
 
@@ -79,38 +257,90 @@ async function load() {
     fetch('data/summary.json').then(r => r.json()),
   ]);
   document.getElementById('hub-name').textContent = assetsPayload.hub || 'ICRISAT Data Hub';
-  document.getElementById('gen').textContent = 'catalogue generated ' + (assetsPayload.generated_at || '');
+  const stamp = 'catalogue generated ' + (assetsPayload.generated_at || '');
+  document.getElementById('stamp').textContent = stamp;
+  document.getElementById('gen').textContent = assetsPayload.generated_at || '';
   assets = assetsPayload.assets || [];
-  renderCards(summary, sourcesPayload);
+  renderChips(summary, sourcesPayload);
+  renderCharts(summary);
+  renderDomains(summary.domain_definitions || {});
   renderTeamFilter();
   renderTable();
   renderSources(sourcesPayload);
 }
 
-function renderCards(s, src) {
-  const cards = [
-    ['Total assets', s.total_assets ?? 0],
-    ['Published', (s.by_status || {}).published ?? 0],
-    ['Needs review', s.needs_review ?? 0],
-    ['CSV / Excel / Word', ['csv','excel','word'].map(k => (s.by_file_type||{})[k] ?? 0).join(' / ')],
-    ['Teams', Object.keys(s.by_team || {}).filter(k => k !== 'unspecified').length],
-    ['Federated sources', src.n_sources ?? 0],
+function renderChips(s, src) {
+  const chips = [
+    ['assets', s.total_assets ?? 0],
+    ['published', (s.by_status || {}).published ?? 0],
+    ['needs review', s.needs_review ?? 0],
+    ['teams', Object.keys(s.by_team || {}).filter(k => k !== 'unspecified').length],
+    ['federated sources', src.n_sources ?? 0],
   ];
-  document.getElementById('cards').innerHTML = cards.map(([l, n]) =>
-    `<div class="card"><div class="num">${esc(n)}</div><div class="lbl">${esc(l)}</div></div>`).join('');
+  document.getElementById('chips').innerHTML = chips.map(([l, n]) =>
+    `<span class="chip"><b>${esc(n)}</b> ${esc(l)}</span>`).join('');
+}
+
+function barChart(id, labels, values, color, horizontal) {
+  new Chart(document.getElementById(id), {
+    type: 'bar',
+    data: { labels, datasets: [{ data: values, backgroundColor: color, borderRadius: 4 }] },
+    options: {
+      indexAxis: horizontal ? 'y' : 'x', maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        tooltip: { callbacks: { label: c => ` ${c.raw} asset${c.raw === 1 ? '' : 's'}` } } },
+      scales: { x: { ticks: { precision: 0 }, grid: { display: !horizontal } },
+                y: { ticks: { precision: 0 }, grid: { display: !!horizontal } } },
+    },
+  });
+}
+
+function doughnut(id, labels, values) {
+  new Chart(document.getElementById(id), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: values, backgroundColor: PALETTE, borderWidth: 2, borderColor: '#fff' }] },
+    options: { maintainAspectRatio: false, cutout: '58%',
+      plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: { callbacks: { label: c => ` ${c.label}: ${c.raw}` } } } },
+  });
+}
+
+function entries(obj) {
+  const e = Object.entries(obj || {});
+  return e.length ? e : [['no assets yet', 0]];
+}
+
+function renderCharts(s) {
+  const [tL, tV] = [entries(s.by_team).map(d => d[0]), entries(s.by_team).map(d => d[1])];
+  barChart('c-team', tL, tV, GREEN, true);
+  const [fL, fV] = [entries(s.by_file_type).map(d => d[0]), entries(s.by_file_type).map(d => d[1])];
+  doughnut('c-type', fL, fV);
+  const st = s.by_status || {};
+  doughnut('c-status',
+    ['published', 'needs review'],
+    [st.published ?? 0, st.needs_review ?? 0]);
+  const [aL, aV] = [entries(s.by_access).map(d => d[0]), entries(s.by_access).map(d => d[1])];
+  barChart('c-access', aL, aV, ORANGE, false);
+}
+
+function renderDomains(defs) {
+  const rows = Object.entries(defs).map(([d, def]) =>
+    `<tr><td>${esc(d)}</td><td>${esc(def)}</td></tr>`).join('');
+  document.querySelector('#domtbl tbody').innerHTML =
+    rows || '<tr><td class="muted">No domain vocabulary configured yet.</td></tr>';
 }
 
 function renderTeamFilter() {
   const teams = [...new Set(assets.map(a => a.team).filter(Boolean))].sort();
-  const sel = document.getElementById('f-team');
-  sel.innerHTML = '<option value="">team: all</option>' + teams.map(t => `<option>${esc(t)}</option>`).join('');
+  document.getElementById('f-team').innerHTML =
+    '<option value="">team: all</option>' + teams.map(t => `<option>${esc(t)}</option>`).join('');
 }
 
 function matches(a, q) {
   if (!q) return true;
-  const hay = [a.title, a.description, a.team, (a.tags||[]).join(' '),
-    ...(a.tables||[]).flatMap(t => (t.columns||[]).map(c => c.name)),
-    ...(a.tables||[]).map(t => t.text_preview || '')].join(' ').toLowerCase();
+  const hay = [a.title, a.description, a.team, (a.tags || []).join(' '),
+    ...(a.tables || []).flatMap(t => (t.columns || []).map(c => c.name)),
+    ...(a.tables || []).map(t => t.text_preview || '')].join(' ').toLowerCase();
   return q.toLowerCase().split(/\s+/).every(w => hay.includes(w));
 }
 
@@ -127,30 +357,36 @@ function renderTable() {
     const badge = a.status === 'published' ? '<span class="badge b-pub">published</span>'
                                            : '<span class="badge b-rev">needs review</span>';
     const schema = (a.tables || []).map(t => {
-      if (t.kind === 'document') return `<div class="schema"><b>${esc(t.name)}</b> — document, ${esc(t.n_rows)} paragraphs</div>`;
-      const cols = (t.columns || []).map(c => `${esc(c.name)} <span class="muted">${esc(c.dtype)}</span>`).join(', ');
+      if (t.kind === 'document')
+        return `<div class="schema"><b>${esc(t.name)}</b> — document, ${esc(t.n_rows)} paragraphs</div>`;
+      const cols = (t.columns || []).map(c =>
+        `${esc(c.name)} <span class="muted">${esc(c.dtype)}${c.samples?.length ? ' — e.g. ' + esc(c.samples.slice(0, 3).join(', ')) : ''}</span>`
+      ).join('<br>');
       return `<div class="schema"><b>${esc(t.name)}</b> — ${esc(t.n_rows)} rows × ${esc(t.n_cols)} cols<br>${cols}</div>`;
     }).join('');
     const missing = (a.missing_fields || []).length
-      ? `<div class="muted">missing: ${esc(a.missing_fields.join(', '))}</div>` : '';
+      ? `<div class="muted">missing metadata: ${esc(a.missing_fields.join(', '))}</div>` : '';
+    const provenance = `<div class="muted">${esc(a.file_name)} · ${(a.size_bytes / 1024).toFixed(1)} KB · added ${esc((a.created_at || '').slice(0, 10))}</div>`;
     return `<tr>
       <td><b>${esc(a.title)}</b><br><span class="muted">${esc(a.description || '').slice(0, 140)}</span></td>
       <td>${esc(a.team || '—')}</td><td>${esc(a.file_type)}</td><td>${badge}</td>
+      <td>${esc(a.access || '—')}</td>
       <td>${(a.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</td>
-      <td><details><summary>${esc(a.file_name)}</summary>${schema}${missing}</details></td>
+      <td><details><summary>schema</summary>${provenance}${schema}${missing}</details></td>
     </tr>`;
   }).join('');
 }
 
 function renderSources(payload) {
   document.getElementById('src-count').textContent = `(${payload.n_sources ?? 0})`;
-  document.getElementById('sources').innerHTML = (payload.sources || []).map(s => `
+  document.getElementById('sources-list').innerHTML = (payload.sources || []).map(s => `
     <div class="src">
-      <b>${esc(s.title)}</b> <span class="tag">${esc(s.type)}</span> <span class="tag">${esc(s.access)}</span>
+      <b>${esc(s.title)}</b>
+      <span class="tag">${esc(s.type)}</span><span class="tag">${esc(s.access)}</span>
       ${(s.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}
       <br><a href="${esc(s.url)}">${esc(s.url)}</a>
-      ${s.description ? `<br><span class="muted">${esc(s.description)}</span>` : ''}
-    </div>`).join('');
+      ${s.description ? `<p>${esc(s.description)}</p>` : ''}
+    </div>`).join('') || '<p class="muted">No federated sources registered yet.</p>';
 }
 
 document.getElementById('q').addEventListener('input', renderTable);
@@ -161,7 +397,9 @@ document.querySelectorAll('#tbl th[data-k]').forEach(th => th.addEventListener('
   renderTable();
 }));
 
-load().catch(e => { document.getElementById('cards').innerHTML = `<div class="card">failed to load data: ${esc(e)}</div>`; });
+load().catch(e => {
+  document.getElementById('chips').innerHTML = `<span class="chip">failed to load catalogue data: ${esc(e)}</span>`;
+});
 </script>
 </body>
 </html>

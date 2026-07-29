@@ -100,6 +100,10 @@ def export_pages() -> dict[str, Path]:
         json.dumps(sources_payload, indent=2, ensure_ascii=False), encoding="utf-8"
     )
 
+    summary["hub"] = cfg.hub_name
+    summary["generated_at"] = assets_payload["generated_at"]
+    summary["domain_definitions"] = cfg.get("vocabulary", "domain_definitions", default={})
+
     summary_path = docs_data / "summary.json"
     summary_path.write_text(
         json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8"
