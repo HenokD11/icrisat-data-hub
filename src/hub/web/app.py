@@ -23,6 +23,7 @@ from ..catalog import Catalog
 from ..config import load_config
 from ..ingest import metadata as meta
 from ..ingest.pipeline import ingest_file
+from ..sync import sync_in_background
 
 # Optional shared-secret gate for when the page is exposed via a public tunnel:
 # set HUB_UPLOAD_TOKEN and share the link as https://<host>/?token=<secret>.
@@ -157,6 +158,8 @@ def create_app() -> FastAPI:
             }.items() if v
         }
         result = ingest_file(dest, cfg, catalog(), extra_metadata=sidecar_meta)
+        if result.get("ok"):
+            sync_in_background()  # deployed mode: push catalogue JSON to GitHub
         status = 200 if result.get("ok") else 422
         return JSONResponse(result, status_code=status)
 
@@ -201,10 +204,12 @@ def main() -> None:
     import uvicorn
 
     cfg = load_config()
+    # Cloud hosts (Railway/Render/Fly) inject PORT; fall back to hub.yaml.
+    port = int(os.environ.get("PORT") or cfg.get("web", "port", default=8010))
     uvicorn.run(
         create_app(),
         host=cfg.get("web", "host", default="0.0.0.0"),
-        port=int(cfg.get("web", "port", default=8000)),
+        port=port,
     )
 
 

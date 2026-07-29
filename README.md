@@ -95,6 +95,31 @@ Each external dataset/API/database gets one small YAML in `sources/` - see
 `sources/README.md` and `sources/examples/`. The hub registers and exposes
 these through the MCP server without copying the data.
 
+## Deploy online (shareable upload link)
+
+The repo is deploy-from-GitHub ready (Dockerfile included) — no local tooling
+needed. Recommended host: **Railway** (persistent volumes, permanent domain,
+~$5/mo hobby plan covers app + 1 GB volume).
+
+1. **railway.app** -> log in with GitHub -> **New Project** -> **Deploy from
+   GitHub repo** -> select `icrisat-data-hub` (Dockerfile is auto-detected).
+2. **Add a volume**: service -> Settings -> Volumes -> mount at `/data` (1 GB).
+   Raw uploads and the SQLite catalogue live there - internal data never
+   touches GitHub.
+3. **Set variables** (service -> Variables):
+   - `HUB_UPLOAD_TOKEN` = a shared secret - the upload link carries it as
+     `?token=...`
+   - `GITHUB_TOKEN` = fine-grained PAT, *contents: read/write* on this repo
+     only (github.com -> Settings -> Developer settings -> Fine-grained tokens)
+   - `GITHUB_REPO` = `HenokD11/icrisat-data-hub`
+   - `GITHUB_BRANCH` = `main` (or the branch Pages builds from)
+4. **Generate the public domain**: Settings -> Networking -> Generate Domain.
+5. Share `https://<your-domain>/?token=<HUB_UPLOAD_TOKEN>` with teams.
+
+After every upload the host pushes only the catalogue JSON (never raw files)
+to the repo, so the Pages dashboard refreshes automatically. Without
+`GITHUB_TOKEN` the sync is a no-op (local dev mode).
+
 ## GitHub Pages catalogue app
 
 A static dashboard lives in `docs/` and is served at

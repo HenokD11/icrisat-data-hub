@@ -35,10 +35,19 @@ class HubConfig:
 
     # -- typed helpers -----------------------------------------------------
     def path(self, name: str) -> Path:
-        """Resolve a path defined under ``paths:`` against the project root."""
+        """Resolve a path defined under ``paths:`` against the project root.
+
+        When deployed (container), setting HUB_DATA_DIR remaps the local
+        working-state paths (data/...) onto the mounted volume so uploads and
+        the SQLite catalogue survive redeploys; repo content (config, sources)
+        stays in the image.
+        """
         value = self.get("paths", name)
         if value is None:
             raise KeyError(f"paths.{name} not defined in {CONFIG_PATH}")
+        data_dir = os.environ.get("HUB_DATA_DIR")
+        if data_dir and value.startswith("data/"):
+            return Path(data_dir) / Path(value).relative_to("data")
         p = Path(value)
         if not p.is_absolute():
             p = self.root / p

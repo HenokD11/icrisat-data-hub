@@ -31,6 +31,10 @@ normalised assets.json → publish).
   `needs_review` with a `*_metadata_review.yaml` generated next to the file.
 - YAML pointer schema lives in `src/hub/sources.py` docstring and
   `sources/README.md` — update both if it changes.
+- Deployed mode: `HUB_DATA_DIR` remaps data/ paths onto the host volume
+  (`config.py`); the web app reads `PORT`; after uploads `hub/sync.py` pushes
+  catalogue JSON (never raw files) to GitHub when `GITHUB_TOKEN`/`GITHUB_REPO`
+  are set. Dockerfile + .dockerignore must keep local state out of the image.
 - Phase-1 file types: .csv, .xlsx/.xls, .docx (`src/hub/ingest/readers.py`).
   New types: add a reader + register the extension in `config/hub.yaml` and
   `detect_file_type`.
