@@ -68,7 +68,7 @@ def ingest_file(
 
     result: dict[str, Any] = {"file": file_path.name, "ok": False}
 
-    if file_path.name.lower() in IGNORED_NAMES:
+    if file_path.name.startswith(".") or file_path.name.lower() in IGNORED_NAMES:
         result["reason"] = "ignored"
         return result
 

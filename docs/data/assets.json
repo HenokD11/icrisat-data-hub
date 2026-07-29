@@ -1,8 +1,864 @@
 {
   "hub": "ICRISAT Data Hub",
-  "generated_at": "2026-07-29T07:19:37+00:00",
-  "n_assets": 3,
+  "generated_at": "2026-07-29T10:48:41+00:00",
+  "n_assets": 7,
   "assets": [
+    {
+      "asset_id": "asset_19f078741db1",
+      "title": "Wheat Dst 2026 Final (1)",
+      "description": "Tabular dataset 'wheat_dst_2026_final (1).csv' with 18973 rows and 13 columns: unique_id, long, lat, year, source, crop, treatment, n_kgpha, p_kgpha, k_kgpha, grain_yield_kgpha, Planting_date...",
+      "team": null,
+      "owner": null,
+      "contact": null,
+      "file_name": "wheat_dst_2026_final (1).csv",
+      "file_path": "data\\processed\\unknown\\2026-07\\wheat_dst_2026_final (1).csv",
+      "file_type": "csv",
+      "file_ext": ".csv",
+      "size_bytes": 1733037,
+      "sha256": "bc4faecf109317372ccdeb544339c0c0d7167a2fd434b305c77ff6f14543fe35",
+      "status": "needs_review",
+      "tags": [],
+      "license": null,
+      "access": null,
+      "domain": null,
+      "hub_role": null,
+      "spatial_coverage": null,
+      "temporal_coverage": null,
+      "missing_fields": [
+        "team",
+        "owner",
+        "license",
+        "access"
+      ],
+      "ingest_log": "Ingested 2026-07-29T13:48:02",
+      "created_at": "2026-07-29T10:48:02+00:00",
+      "updated_at": "2026-07-29T10:48:02+00:00",
+      "upload_channel": "inbox",
+      "tables": [
+        {
+          "table_id": "tbl_aac53f346a99",
+          "asset_id": "asset_19f078741db1",
+          "name": "data",
+          "kind": "table",
+          "n_rows": 18973,
+          "n_cols": 13,
+          "columns": [
+            {
+              "name": "unique_id",
+              "dtype": "str",
+              "non_null": 18973,
+              "n_unique": 18973,
+              "samples": [
+                "Wheat00001",
+                "Wheat00002",
+                "Wheat00003",
+                "Wheat00004",
+                "Wheat00005"
+              ]
+            },
+            {
+              "name": "long",
+              "dtype": "float64",
+              "non_null": 18973,
+              "n_unique": 2444,
+              "samples": [
+                "34.548",
+                "34.548",
+                "34.9113",
+                "35.16",
+                "35.16"
+              ]
+            },
+            {
+              "name": "lat",
+              "dtype": "float64",
+              "non_null": 18973,
+              "n_unique": 2509,
+              "samples": [
+                "8.7175",
+                "8.7175",
+                "12.8752",
+                "8.96",
+                "8.96"
+              ]
+            },
+            {
+              "name": "year",
+              "dtype": "int64",
+              "non_null": 18973,
+              "n_unique": 25,
+              "samples": [
+                "2017",
+                "2017",
+                "2017",
+                "2021",
+                "2021"
+              ]
+            },
+            {
+              "name": "source",
+              "dtype": "str",
+              "non_null": 18973,
+              "n_unique": 36,
+              "samples": [
+                "ISFM-2017",
+                "ISFM-2017",
+                "ISFM-2017",
+                "OARI",
+                "OARI"
+              ]
+            },
+            {
+              "name": "crop",
+              "dtype": "str",
+              "non_null": 18973,
+              "n_unique": 2,
+              "samples": [
+                "Wheat",
+                "Wheat",
+                "Wheat",
+                "Wheat",
+                "Wheat"
+              ]
+            },
+            {
+              "name": "treatment",
+              "dtype": "str",
+              "non_null": 18973,
+              "n_unique": 40,
+              "samples": [
+                "NPKSZnB_Org",
+                "NPKSZnB_Org",
+                "NPKSZnB_Org",
+                "Control",
+                "Control"
+              ]
+            },
+            {
+              "name": "n_kgpha",
+              "dtype": "int64",
+              "non_null": 18973,
+              "n_unique": 159,
+              "samples": [
+                "69",
+                "69",
+                "16",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "name": "p_kgpha",
+              "dtype": "int64",
+              "non_null": 18973,
+              "n_unique": 62,
+              "samples": [
+                "25",
+                "25",
+                "17",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "name": "k_kgpha",
+              "dtype": "int64",
+              "non_null": 18973,
+              "n_unique": 20,
+              "samples": [
+                "3",
+                "3",
+                "3",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "name": "grain_yield_kgpha",
+              "dtype": "int64",
+              "non_null": 18973,
+              "n_unique": 5470,
+              "samples": [
+                "4170",
+                "4465",
+                "6191",
+                "815",
+                "889"
+              ]
+            },
+            {
+              "name": "Planting_date",
+              "dtype": "str",
+              "non_null": 18973,
+              "n_unique": 182,
+              "samples": [
+                "06/21/2017",
+                "06/21/2017",
+                "05/30/2017",
+                "06/21/2021",
+                "06/21/2021"
+              ]
+            },
+            {
+              "name": "Harvesting_date",
+              "dtype": "str",
+              "non_null": 18973,
+              "n_unique": 186,
+              "samples": [
+                "12/13/2017",
+                "12/13/2017",
+                "12/15/2017",
+                "12/13/2021",
+                "12/13/2021"
+              ]
+            }
+          ],
+          "text_preview": null
+        }
+      ]
+    },
+    {
+      "asset_id": "asset_0615c923b555",
+      "title": "Sorghum Dst Old New 2026 All",
+      "description": "Tabular dataset 'sorghum_dst_old_new_2026_All.csv' with 6613 rows and 13 columns: unique_id, Data_source, Lat, Long, Year, Variety, Planting_date, Harvesting_date, Treatment, n_kgpha, p_kgpha, k_kgpha...",
+      "team": null,
+      "owner": null,
+      "contact": null,
+      "file_name": "sorghum_dst_old_new_2026_All.csv",
+      "file_path": "data\\processed\\unknown\\2026-07\\sorghum_dst_old_new_2026_All.csv",
+      "file_type": "csv",
+      "file_ext": ".csv",
+      "size_bytes": 657437,
+      "sha256": "740f9f697d2c1aa88244df1315e421c67da8bd2964878fc07f890c926fef991f",
+      "status": "needs_review",
+      "tags": [],
+      "license": null,
+      "access": null,
+      "domain": null,
+      "hub_role": null,
+      "spatial_coverage": null,
+      "temporal_coverage": null,
+      "missing_fields": [
+        "team",
+        "owner",
+        "license",
+        "access"
+      ],
+      "ingest_log": "Ingested 2026-07-29T13:48:01",
+      "created_at": "2026-07-29T10:48:01+00:00",
+      "updated_at": "2026-07-29T10:48:01+00:00",
+      "upload_channel": "inbox",
+      "tables": [
+        {
+          "table_id": "tbl_1f44f6386cd8",
+          "asset_id": "asset_0615c923b555",
+          "name": "data",
+          "kind": "table",
+          "n_rows": 6613,
+          "n_cols": 13,
+          "columns": [
+            {
+              "name": "unique_id",
+              "dtype": "str",
+              "non_null": 6613,
+              "n_unique": 6613,
+              "samples": [
+                "Sorghum0001",
+                "Sorghum0002",
+                "Sorghum0003",
+                "Sorghum0004",
+                "Sorghum0005"
+              ]
+            },
+            {
+              "name": "Data_source",
+              "dtype": "str",
+              "non_null": 6613,
+              "n_unique": 29,
+              "samples": [
+                "IFDC",
+                "IFDC",
+                "IFDC",
+                "IFDC",
+                "IFDC"
+              ]
+            },
+            {
+              "name": "Lat",
+              "dtype": "float64",
+              "non_null": 6613,
+              "n_unique": 513,
+              "samples": [
+                "10.07",
+                "10.07",
+                "10.07",
+                "10.07",
+                "10.07"
+              ]
+            },
+            {
+              "name": "Long",
+              "dtype": "float64",
+              "non_null": 6613,
+              "n_unique": 533,
+              "samples": [
+                "39.728",
+                "39.728",
+                "39.728",
+                "39.728",
+                "39.728"
+              ]
+            },
+            {
+              "name": "Year",
+              "dtype": "int64",
+              "non_null": 6613,
+              "n_unique": 22,
+              "samples": [
+                "2022",
+                "2022",
+                "2022",
+                "2022",
+                "2022"
+              ]
+            },
+            {
+              "name": "Variety",
+              "dtype": "str",
+              "non_null": 6503,
+              "n_unique": 21,
+              "samples": [
+                "Belete",
+                "Belete",
+                "Belete",
+                "Belete",
+                "Belete"
+              ]
+            },
+            {
+              "name": "Planting_date",
+              "dtype": "str",
+              "non_null": 6613,
+              "n_unique": 50,
+              "samples": [
+                "7/1/2022",
+                "7/1/2022",
+                "7/1/2022",
+                "7/1/2022",
+                "7/1/2022"
+              ]
+            },
+            {
+              "name": "Harvesting_date",
+              "dtype": "str",
+              "non_null": 6613,
+              "n_unique": 49,
+              "samples": [
+                "11/30/2022",
+                "11/30/2022",
+                "11/30/2022",
+                "11/30/2022",
+                "11/30/2022"
+              ]
+            },
+            {
+              "name": "Treatment",
+              "dtype": "str",
+              "non_null": 6582,
+              "n_unique": 260,
+              "samples": [
+                "NPSKZnB",
+                "NPSZnB",
+                "NPSKB",
+                "NPSZnB",
+                "NPSKZnB"
+              ]
+            },
+            {
+              "name": "n_kgpha",
+              "dtype": "float64",
+              "non_null": 6613,
+              "n_unique": 120,
+              "samples": [
+                "75.0",
+                "75.0",
+                "75.0",
+                "75.0",
+                "75.0"
+              ]
+            },
+            {
+              "name": "p_kgpha",
+              "dtype": "float64",
+              "non_null": 6613,
+              "n_unique": 50,
+              "samples": [
+                "17.0",
+                "17.0",
+                "17.0",
+                "17.0",
+                "17.0"
+              ]
+            },
+            {
+              "name": "k_kgpha",
+              "dtype": "int64",
+              "non_null": 6613,
+              "n_unique": 15,
+              "samples": [
+                "50",
+                "50",
+                "50",
+                "50",
+                "50"
+              ]
+            },
+            {
+              "name": "Grain_yield",
+              "dtype": "float64",
+              "non_null": 6613,
+              "n_unique": 3286,
+              "samples": [
+                "5830.0",
+                "5790.0",
+                "5661.0",
+                "5645.0",
+                "5612.0"
+              ]
+            }
+          ],
+          "text_preview": null
+        }
+      ]
+    },
+    {
+      "asset_id": "asset_340dd8ee9f3b",
+      "title": "Maize Final 2026 3 (1)",
+      "description": "Tabular dataset 'Maize_Final_2026_3 (1).csv' with 16028 rows and 13 columns: unique_id, long, lat, year, source, crop, treatment, n_kgpha, p_kgpha, k_kgpha, grain_yield_kgpha, Planting_date...",
+      "team": null,
+      "owner": null,
+      "contact": null,
+      "file_name": "Maize_Final_2026_3 (1).csv",
+      "file_path": "data\\processed\\unknown\\2026-07\\Maize_Final_2026_3 (1).csv",
+      "file_type": "csv",
+      "file_ext": ".csv",
+      "size_bytes": 1391798,
+      "sha256": "03362607489f8081d31b7887bd1d7c3e2eaea468f2962baf678c2b8b6c7c5497",
+      "status": "needs_review",
+      "tags": [],
+      "license": null,
+      "access": null,
+      "domain": null,
+      "hub_role": null,
+      "spatial_coverage": null,
+      "temporal_coverage": null,
+      "missing_fields": [
+        "team",
+        "owner",
+        "license",
+        "access"
+      ],
+      "ingest_log": "Ingested 2026-07-29T13:48:00",
+      "created_at": "2026-07-29T10:48:00+00:00",
+      "updated_at": "2026-07-29T10:48:00+00:00",
+      "upload_channel": "inbox",
+      "tables": [
+        {
+          "table_id": "tbl_3f8f04c64439",
+          "asset_id": "asset_340dd8ee9f3b",
+          "name": "data",
+          "kind": "table",
+          "n_rows": 16028,
+          "n_cols": 13,
+          "columns": [
+            {
+              "name": "unique_id",
+              "dtype": "str",
+              "non_null": 16028,
+              "n_unique": 16028,
+              "samples": [
+                "MZ_2925",
+                "MZ_2935",
+                "MZ_2945",
+                "MZ_2087",
+                "MZ_1969"
+              ]
+            },
+            {
+              "name": "long",
+              "dtype": "float64",
+              "non_null": 16028,
+              "n_unique": 970,
+              "samples": [
+                "36.29",
+                "36.29",
+                "36.29",
+                "36.989",
+                "36.866"
+              ]
+            },
+            {
+              "name": "lat",
+              "dtype": "float64",
+              "non_null": 16028,
+              "n_unique": 1063,
+              "samples": [
+                "8.665",
+                "8.665",
+                "8.665",
+                "10.659",
+                "10.763"
+              ]
+            },
+            {
+              "name": "year",
+              "dtype": "int64",
+              "non_null": 16028,
+              "n_unique": 17,
+              "samples": [
+                "2021",
+                "2021",
+                "2021",
+                "2021",
+                "2021"
+              ]
+            },
+            {
+              "name": "source",
+              "dtype": "str",
+              "non_null": 16028,
+              "n_unique": 23,
+              "samples": [
+                "OARI",
+                "OARI",
+                "OARI",
+                "ARARI",
+                "ARARI"
+              ]
+            },
+            {
+              "name": "crop",
+              "dtype": "str",
+              "non_null": 16028,
+              "n_unique": 2,
+              "samples": [
+                "Maize",
+                "Maize",
+                "Maize",
+                "Maize",
+                "Maize"
+              ]
+            },
+            {
+              "name": "treatment",
+              "dtype": "str",
+              "non_null": 16028,
+              "n_unique": 51,
+              "samples": [
+                "Control",
+                "Control",
+                "Control",
+                "PKSZnB",
+                "Control"
+              ]
+            },
+            {
+              "name": "n_kgpha",
+              "dtype": "int64",
+              "non_null": 16028,
+              "n_unique": 111,
+              "samples": [
+                "0",
+                "0",
+                "0",
+                "0",
+                "0"
+              ]
+            },
+            {
+              "name": "p_kgpha",
+              "dtype": "float64",
+              "non_null": 16028,
+              "n_unique": 60,
+              "samples": [
+                "0.0",
+                "0.0",
+                "0.0",
+                "92.0",
+                "0.0"
+              ]
+            },
+            {
+              "name": "k_kgpha",
+              "dtype": "int64",
+              "non_null": 16028,
+              "n_unique": 23,
+              "samples": [
+                "0",
+                "0",
+                "0",
+                "60",
+                "0"
+              ]
+            },
+            {
+              "name": "grain_yield_kgpha",
+              "dtype": "float64",
+              "non_null": 16028,
+              "n_unique": 9131,
+              "samples": [
+                "0.0",
+                "0.0",
+                "0.0",
+                "0.0",
+                "48.0"
+              ]
+            },
+            {
+              "name": "Planting_date",
+              "dtype": "str",
+              "non_null": 16028,
+              "n_unique": 84,
+              "samples": [
+                "3/3/2021",
+                "3/3/2021",
+                "3/3/2021",
+                "5/5/2021",
+                "5/5/2021"
+              ]
+            },
+            {
+              "name": "Harvesting_date",
+              "dtype": "str",
+              "non_null": 16028,
+              "n_unique": 65,
+              "samples": [
+                "11/11/2021",
+                "11/11/2021",
+                "11/11/2021",
+                "11/11/2021",
+                "11/11/2021"
+              ]
+            }
+          ],
+          "text_preview": null
+        }
+      ]
+    },
+    {
+      "asset_id": "asset_eeec436b7449",
+      "title": "Final Final Tef Updatedv2 2026",
+      "description": "Tabular dataset 'Final_Final_Tef_updatedV2_2026.csv' with 17696 rows and 13 columns: unique_id, long, lat, year, source, crop, treatment, n_kgpha, p_kgpha, k_kgpha, grain_yield_kgpha, Planting_date...",
+      "team": null,
+      "owner": null,
+      "contact": null,
+      "file_name": "Final_Final_Tef_updatedV2_2026.csv",
+      "file_path": "data\\processed\\unknown\\2026-07\\Final_Final_Tef_updatedV2_2026.csv",
+      "file_type": "csv",
+      "file_ext": ".csv",
+      "size_bytes": 1463221,
+      "sha256": "07d199ae5373444a4078018fbd20c6915b0e6b302bec489d92c22c1d385efb5d",
+      "status": "needs_review",
+      "tags": [],
+      "license": null,
+      "access": null,
+      "domain": null,
+      "hub_role": null,
+      "spatial_coverage": null,
+      "temporal_coverage": null,
+      "missing_fields": [
+        "team",
+        "owner",
+        "license",
+        "access"
+      ],
+      "ingest_log": "Ingested 2026-07-29T13:47:59",
+      "created_at": "2026-07-29T10:47:59+00:00",
+      "updated_at": "2026-07-29T10:47:59+00:00",
+      "upload_channel": "inbox",
+      "tables": [
+        {
+          "table_id": "tbl_70fcc27edf8a",
+          "asset_id": "asset_eeec436b7449",
+          "name": "data",
+          "kind": "table",
+          "n_rows": 17696,
+          "n_cols": 13,
+          "columns": [
+            {
+              "name": "unique_id",
+              "dtype": "int64",
+              "non_null": 17696,
+              "n_unique": 17696,
+              "samples": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5"
+              ]
+            },
+            {
+              "name": "long",
+              "dtype": "float64",
+              "non_null": 17696,
+              "n_unique": 805,
+              "samples": [
+                "35.173",
+                "35.173",
+                "35.173",
+                "35.173",
+                "35.173"
+              ]
+            },
+            {
+              "name": "lat",
+              "dtype": "float64",
+              "non_null": 17696,
+              "n_unique": 847,
+              "samples": [
+                "8.992",
+                "8.992",
+                "8.992",
+                "8.992",
+                "8.992"
+              ]
+            },
+            {
+              "name": "year",
+              "dtype": "int64",
+              "non_null": 17696,
+              "n_unique": 24,
+              "samples": [
+                "2021",
+                "2021",
+                "2021",
+                "2021",
+                "2021"
+              ]
+            },
+            {
+              "name": "source",
+              "dtype": "str",
+              "non_null": 17696,
+              "n_unique": 27,
+              "samples": [
+                "OARI",
+                "OARI",
+                "OARI",
+                "OARI",
+                "OARI"
+              ]
+            },
+            {
+              "name": "crop",
+              "dtype": "str",
+              "non_null": 17696,
+              "n_unique": 1,
+              "samples": [
+                "Tef",
+                "Tef",
+                "Tef",
+                "Tef",
+                "Tef"
+              ]
+            },
+            {
+              "name": "treatment",
+              "dtype": "str",
+              "non_null": 17696,
+              "n_unique": 176,
+              "samples": [
+                "0_0_0",
+                "0_0_0",
+                "0_0_0",
+                "0_20_50",
+                "0_20_50"
+              ]
+            },
+            {
+              "name": "n_kgpha",
+              "dtype": "float64",
+              "non_null": 17696,
+              "n_unique": 120,
+              "samples": [
+                "0.0",
+                "0.0",
+                "0.0",
+                "0.0",
+                "0.0"
+              ]
+            },
+            {
+              "name": "p_kgpha",
+              "dtype": "float64",
+              "non_null": 17696,
+              "n_unique": 67,
+              "samples": [
+                "0.0",
+                "0.0",
+                "0.0",
+                "20.0",
+                "20.0"
+              ]
+            },
+            {
+              "name": "k_kgpha",
+              "dtype": "int64",
+              "non_null": 17696,
+              "n_unique": 11,
+              "samples": [
+                "0",
+                "0",
+                "0",
+                "50",
+                "50"
+              ]
+            },
+            {
+              "name": "grain_yield_kgpha",
+              "dtype": "float64",
+              "non_null": 17696,
+              "n_unique": 7420,
+              "samples": [
+                "500.0",
+                "527.8",
+                "1398.1",
+                "1046.3",
+                "1055.6"
+              ]
+            },
+            {
+              "name": "Planting_date",
+              "dtype": "str",
+              "non_null": 17696,
+              "n_unique": 123,
+              "samples": [
+                "6/21/2021",
+                "6/21/2021",
+                "6/21/2021",
+                "6/21/2021",
+                "6/21/2021"
+              ]
+            },
+            {
+              "name": "Harvesting_date",
+              "dtype": "str",
+              "non_null": 17696,
+              "n_unique": 84,
+              "samples": [
+                "11/13/2021",
+                "11/13/2021",
+                "11/13/2021",
+                "11/13/2021",
+                "11/13/2021"
+              ]
+            }
+          ],
+          "text_preview": null
+        }
+      ]
+    },
     {
       "asset_id": "asset_d7d77f0ff13e",
       "title": "Soil Health Woreda Summary",
