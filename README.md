@@ -94,6 +94,18 @@ Each external dataset/API/database gets one small YAML in `sources/` â€” se
 `sources/README.md` and `sources/examples/`. The hub registers and exposes
 these through the MCP server without copying the data.
 
+## GitHub Pages catalogue app
+
+A static dashboard lives in `docs/` and is served at
+https://henokd11.github.io/icrisat-data-hub/. It reads `docs/data/*.json` —
+regenerate and commit them after the catalogue changes:
+
+```
+set PYTHONPATH=src
+.venv\Scripts\python -m hub.pages
+git add docs/data && git commit -m "Refresh catalogue app data" && git push
+```
+
 ## Layout
 
 ```
