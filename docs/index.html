@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICRISAT Data Hub — Catalogue</title>
+<style>
+  :root { --blue: #2c5f9e; --green: #2e7d52; --amber: #b07d2b; --grey: #667085; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, sans-serif; margin: 0; color: #1a1a1a; background: #fafbfc; }
+  header { background: var(--blue); color: #fff; padding: 1.2rem 2rem; }
+  header h1 { margin: 0; font-size: 1.3rem; }
+  header p { margin: .2rem 0 0; opacity: .85; font-size: .85rem; }
+  main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .8rem; margin-bottom: 1.4rem; }
+  .card { background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; padding: .9rem 1rem; }
+  .card .num { font-size: 1.7rem; font-weight: 700; }
+  .card .lbl { font-size: .75rem; color: var(--grey); text-transform: uppercase; letter-spacing: .04em; }
+  .controls { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem; }
+  .controls input, .controls select { padding: .45rem .6rem; border: 1px solid #cbd2d9; border-radius: 6px; font-size: .9rem; }
+  .controls input[type=search] { flex: 1; min-width: 220px; }
+  table { border-collapse: collapse; width: 100%; background: #fff; font-size: .85rem; }
+  th, td { border: 1px solid #e4e7ec; padding: .45rem .6rem; text-align: left; vertical-align: top; }
+  th { background: #f2f4f7; cursor: pointer; user-select: none; white-space: nowrap; }
+  th:hover { background: #e9edf2; }
+  tr:hover td { background: #f8fafc; }
+  .badge { display: inline-block; padding: .1rem .5rem; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+  .b-pub { background: #e9f7ef; color: var(--green); border: 1px solid #a7d7bd; }
+  .b-rev { background: #fdf4e7; color: var(--amber); border: 1px solid #eccf9e; }
+  .tag { display: inline-block; background: #eef2f8; color: #34486b; border-radius: 4px; padding: 0 .35rem; font-size: .72rem; margin: .05rem; }
+  details summary { cursor: pointer; color: var(--blue); font-size: .8rem; }
+  .schema { font-size: .78rem; color: #444; background: #f8fafc; border-radius: 6px; padding: .5rem .7rem; margin-top: .4rem; }
+  .schema b { color: #1a1a1a; }
+  h2 { font-size: 1.05rem; margin-top: 2rem; }
+  .src { background: #fff; border: 1px solid #e4e7ec; border-radius: 8px; padding: .8rem 1rem; margin-bottom: .6rem; }
+  .src a { color: var(--blue); word-break: break-all; }
+  .muted { color: var(--grey); font-size: .8rem; }
+  footer { text-align: center; color: var(--grey); font-size: .78rem; padding: 2rem 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="hub-name">ICRISAT Data Hub</h1>
+  <p>Catalogue of shared team datasets and federated external sources ·
+     <a style="color:#fff" href="https://github.com/">repository</a></p>
+</header>
+<main>
+  <div class="cards" id="cards"></div>
+
+  <h2>Assets <span class="muted" id="asset-count"></span></h2>
+  <div class="controls">
+    <input type="search" id="q" placeholder="Search title, description, column names, tags…">
+    <select id="f-status"><option value="">status: all</option><option>published</option><option>needs_review</option></select>
+    <select id="f-type"><option value="">type: all</option><option>csv</option><option>excel</option><option>word</option></select>
+    <select id="f-team"><option value="">team: all</option></select>
+  </div>
+  <table id="tbl">
+    <thead><tr>
+      <th data-k="title">title</th><th data-k="team">team</th><th data-k="file_type">type</th>
+      <th data-k="status">status</th><th data-k="tags">tags</th><th>details</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Federated sources <span class="muted" id="src-count"></span></h2>
+  <p class="muted">External datasets/APIs registered as YAML pointers — the hub points to these rather than hosting copies.</p>
+  <div id="sources"></div>
+</main>
+<footer>Generated programmatically from <code>docs/data/*.json</code> — no hand-typed numbers. · <span id="gen"></span></footer>
+
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let assets = [], sortKey = 'title', sortDir = 1;
+
+async function load() {
+  const [assetsPayload, sourcesPayload, summary] = await Promise.all([
+    fetch('data/assets.json').then(r => r.json()),
+    fetch('data/sources.json').then(r => r.json()),
+    fetch('data/summary.json').then(r => r.json()),
+  ]);
+  document.getElementById('hub-name').textContent = assetsPayload.hub || 'ICRISAT Data Hub';
+  document.getElementById('gen').textContent = 'catalogue generated ' + (assetsPayload.generated_at || '');
+  assets = assetsPayload.assets || [];
+  renderCards(summary, sourcesPayload);
+  renderTeamFilter();
+  renderTable();
+  renderSources(sourcesPayload);
+}
+
+function renderCards(s, src) {
+  const cards = [
+    ['Total assets', s.total_assets ?? 0],
+    ['Published', (s.by_status || {}).published ?? 0],
+    ['Needs review', s.needs_review ?? 0],
+    ['CSV / Excel / Word', ['csv','excel','word'].map(k => (s.by_file_type||{})[k] ?? 0).join(' / ')],
+    ['Teams', Object.keys(s.by_team || {}).filter(k => k !== 'unspecified').length],
+    ['Federated sources', src.n_sources ?? 0],
+  ];
+  document.getElementById('cards').innerHTML = cards.map(([l, n]) =>
+    `<div class="card"><div class="num">${esc(n)}</div><div class="lbl">${esc(l)}</div></div>`).join('');
+}
+
+function renderTeamFilter() {
+  const teams = [...new Set(assets.map(a => a.team).filter(Boolean))].sort();
+  const sel = document.getElementById('f-team');
+  sel.innerHTML = '<option value="">team: all</option>' + teams.map(t => `<option>${esc(t)}</option>`).join('');
+}
+
+function matches(a, q) {
+  if (!q) return true;
+  const hay = [a.title, a.description, a.team, (a.tags||[]).join(' '),
+    ...(a.tables||[]).flatMap(t => (t.columns||[]).map(c => c.name)),
+    ...(a.tables||[]).map(t => t.text_preview || '')].join(' ').toLowerCase();
+  return q.toLowerCase().split(/\s+/).every(w => hay.includes(w));
+}
+
+function renderTable() {
+  const q = document.getElementById('q').value.trim();
+  const fs = document.getElementById('f-status').value;
+  const ft = document.getElementById('f-type').value;
+  const fm = document.getElementById('f-team').value;
+  const rows = assets
+    .filter(a => matches(a, q) && (!fs || a.status === fs) && (!ft || a.file_type === ft) && (!fm || a.team === fm))
+    .sort((a, b) => String(a[sortKey] ?? '').localeCompare(String(b[sortKey] ?? '')) * sortDir);
+  document.getElementById('asset-count').textContent = `(${rows.length} of ${assets.length})`;
+  document.querySelector('#tbl tbody').innerHTML = rows.map(a => {
+    const badge = a.status === 'published' ? '<span class="badge b-pub">published</span>'
+                                           : '<span class="badge b-rev">needs review</span>';
+    const schema = (a.tables || []).map(t => {
+      if (t.kind === 'document') return `<div class="schema"><b>${esc(t.name)}</b> — document, ${esc(t.n_rows)} paragraphs</div>`;
+      const cols = (t.columns || []).map(c => `${esc(c.name)} <span class="muted">${esc(c.dtype)}</span>`).join(', ');
+      return `<div class="schema"><b>${esc(t.name)}</b> — ${esc(t.n_rows)} rows × ${esc(t.n_cols)} cols<br>${cols}</div>`;
+    }).join('');
+    const missing = (a.missing_fields || []).length
+      ? `<div class="muted">missing: ${esc(a.missing_fields.join(', '))}</div>` : '';
+    return `<tr>
+      <td><b>${esc(a.title)}</b><br><span class="muted">${esc(a.description || '').slice(0, 140)}</span></td>
+      <td>${esc(a.team || '—')}</td><td>${esc(a.file_type)}</td><td>${badge}</td>
+      <td>${(a.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</td>
+      <td><details><summary>${esc(a.file_name)}</summary>${schema}${missing}</details></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderSources(payload) {
+  document.getElementById('src-count').textContent = `(${payload.n_sources ?? 0})`;
+  document.getElementById('sources').innerHTML = (payload.sources || []).map(s => `
+    <div class="src">
+      <b>${esc(s.title)}</b> <span class="tag">${esc(s.type)}</span> <span class="tag">${esc(s.access)}</span>
+      ${(s.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}
+      <br><a href="${esc(s.url)}">${esc(s.url)}</a>
+      ${s.description ? `<br><span class="muted">${esc(s.description)}</span>` : ''}
+    </div>`).join('');
+}
+
+document.getElementById('q').addEventListener('input', renderTable);
+for (const id of ['f-status', 'f-type', 'f-team']) document.getElementById(id).addEventListener('change', renderTable);
+document.querySelectorAll('#tbl th[data-k]').forEach(th => th.addEventListener('click', () => {
+  const k = th.dataset.k;
+  if (sortKey === k) sortDir *= -1; else { sortKey = k; sortDir = 1; }
+  renderTable();
+}));
+
+load().catch(e => { document.getElementById('cards').innerHTML = `<div class="card">failed to load data: ${esc(e)}</div>`; });
+</script>
+</body>
+</html>

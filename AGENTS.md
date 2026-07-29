@@ -16,6 +16,7 @@ normalised assets.json → publish).
 - Web app: `scripts\start_web.cmd` (http://localhost:8000)
 - MCP stdio: `scripts\start_mcp_stdio.cmd`; MCP HTTP: `scripts\start_mcp_http.cmd` (port 8100)
 - Validate YAML pointers: `set PYTHONPATH=src && .venv\Scripts\python -m hub.sources`
+- Refresh GitHub Pages app data: `python -m hub.pages` then commit `docs/data/*.json`
 
 ## Conventions
 - All `python -m hub...` invocations need `PYTHONPATH=src` (scripts set it).

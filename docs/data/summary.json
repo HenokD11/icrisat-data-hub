@@ -1,0 +1,21 @@
+{
+  "total_assets": 3,
+  "by_status": {
+    "needs_review": 2,
+    "published": 1
+  },
+  "by_file_type": {
+    "word": 1,
+    "excel": 1,
+    "csv": 1
+  },
+  "by_team": {
+    "unspecified": 2,
+    "Soil Intelligence": 1
+  },
+  "by_access": {
+    "unspecified": 2,
+    "internal": 1
+  },
+  "needs_review": 2
+}
