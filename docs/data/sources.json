@@ -1,0 +1,57 @@
+{
+  "generated_at": "2026-07-29T06:54:15+00:00",
+  "n_sources": 2,
+  "sources": [
+    {
+      "id": "aclimate-ethiopia-api",
+      "title": "AClimate Ethiopia — seasonal forecast & advisory API",
+      "type": "api",
+      "url": "https://aclimate.org/api",
+      "description": "ACLIMATE Web API used by the iSAT climate information services PoC, aligned with the national EDaCAP / Digital AgroClimate Advisory Platform. Provides seasonal forecasts, climatology, and crop advisories for Ethiopia.\n",
+      "format": "json",
+      "access": "internal",
+      "update_frequency": "monthly",
+      "owner": {
+        "team": "Climate Services",
+        "contact": "climate-team@icrisat.org"
+      },
+      "hub_role": "federation",
+      "tags": [
+        "seasonal-forecast",
+        "advisory",
+        "ethiopia",
+        "climate-services"
+      ],
+      "spatial_coverage": "Ethiopia",
+      "temporal_coverage": "rolling seasonal forecasts",
+      "auth_env_var": "ACLIMATE_API_KEY",
+      "source_file": "sources\\examples\\aclimate_api.yaml"
+    },
+    {
+      "id": "chirps-rainfall-africa",
+      "title": "CHIRPS daily rainfall (Africa)",
+      "type": "remote_dataset",
+      "url": "https://data.chc.ucsb.edu/products/CHIRPS-2.0/",
+      "description": "Climate Hazards Group InfraRed Precipitation with Station data — quasi-global 0.05 degree daily rainfall estimates, 1981 to near-present. Shared upstream input for many ICRISAT climate analytics pipelines.\n",
+      "format": "geotiff",
+      "access": "open",
+      "update_frequency": "daily",
+      "owner": {
+        "team": "Climate Services",
+        "contact": "climate-team@icrisat.org"
+      },
+      "license": "Public domain (UCSB CHG)",
+      "hub_role": "federation",
+      "tags": [
+        "rainfall",
+        "climate",
+        "hazard",
+        "shared-input"
+      ],
+      "spatial_coverage": "Africa (quasi-global 50S-50N available)",
+      "temporal_coverage": "1981-present",
+      "source_file": "sources\\examples\\chirps_rainfall.yaml"
+    }
+  ],
+  "validation_problems": []
+}

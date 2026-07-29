@@ -1,0 +1,280 @@
+{
+  "hub": "ICRISAT Data Hub",
+  "generated_at": "2026-07-29T06:54:15+00:00",
+  "n_assets": 3,
+  "assets": [
+    {
+      "asset_id": "asset_d7d77f0ff13e",
+      "title": "Soil Health Woreda Summary",
+      "description": "Woreda-level soil chemistry summary (pH, OC, total N) with coordinates for East Shewa pilot sites.",
+      "team": "Soil Intelligence",
+      "owner": "H. Desalegn",
+      "contact": "h.desalegn@cgiar.org",
+      "file_name": "soil_health_woreda_summary.xlsx",
+      "file_path": "data\\processed\\Soil Intelligence\\2026-07\\soil_health_woreda_summary.xlsx",
+      "file_type": "excel",
+      "file_ext": ".xlsx",
+      "size_bytes": 5491,
+      "sha256": "57b2752a2a4fdf012e677347aec915f36761fd9b6c505a8b721aa9f1d5ef0d71",
+      "status": "published",
+      "tags": [
+        "soil",
+        "ph",
+        "organic-carbon",
+        "east-shewa"
+      ],
+      "license": "internal",
+      "access": "internal",
+      "domain": "Soil / Agronomy",
+      "hub_role": "ingest",
+      "spatial_coverage": "Ethiopia, East Shewa zone",
+      "temporal_coverage": "2024-2025",
+      "missing_fields": [],
+      "ingest_log": "Ingested 2026-07-29T09:33:57",
+      "created_at": "2026-07-29T06:33:57+00:00",
+      "updated_at": "2026-07-29T06:33:57+00:00",
+      "tables": [
+        {
+          "table_id": "tbl_6dc44581cb37",
+          "asset_id": "asset_d7d77f0ff13e",
+          "name": "chemistry",
+          "kind": "table",
+          "n_rows": 2,
+          "n_cols": 4,
+          "columns": [
+            {
+              "name": "woreda",
+              "dtype": "str",
+              "non_null": 2,
+              "n_unique": 2,
+              "samples": [
+                "Adama",
+                "Mojo"
+              ]
+            },
+            {
+              "name": "ph",
+              "dtype": "float64",
+              "non_null": 2,
+              "n_unique": 2,
+              "samples": [
+                "6.1",
+                "5.7"
+              ]
+            },
+            {
+              "name": "oc_pct",
+              "dtype": "float64",
+              "non_null": 2,
+              "n_unique": 2,
+              "samples": [
+                "1.4",
+                "1.1"
+              ]
+            },
+            {
+              "name": "n_total_pct",
+              "dtype": "float64",
+              "non_null": 2,
+              "n_unique": 2,
+              "samples": [
+                "0.12",
+                "0.09"
+              ]
+            }
+          ],
+          "text_preview": null
+        },
+        {
+          "table_id": "tbl_9791b2dc17de",
+          "asset_id": "asset_d7d77f0ff13e",
+          "name": "locations",
+          "kind": "table",
+          "n_rows": 2,
+          "n_cols": 3,
+          "columns": [
+            {
+              "name": "woreda",
+              "dtype": "str",
+              "non_null": 2,
+              "n_unique": 2,
+              "samples": [
+                "Adama",
+                "Mojo"
+              ]
+            },
+            {
+              "name": "lat",
+              "dtype": "float64",
+              "non_null": 2,
+              "n_unique": 2,
+              "samples": [
+                "8.55",
+                "8.59"
+              ]
+            },
+            {
+              "name": "lon",
+              "dtype": "float64",
+              "non_null": 2,
+              "n_unique": 2,
+              "samples": [
+                "39.27",
+                "39.12"
+              ]
+            }
+          ],
+          "text_preview": null
+        }
+      ]
+    },
+    {
+      "asset_id": "asset_3e7a95a26641",
+      "title": "Fertilizer Response East Shewa",
+      "description": "Tabular dataset 'fertilizer_response_east_shewa.csv' with 5 rows and 4 columns: woreda, crop, n_rate_kg_ha, yield_kg_ha",
+      "team": null,
+      "owner": null,
+      "contact": null,
+      "file_name": "fertilizer_response_east_shewa.csv",
+      "file_path": "data\\processed\\unknown\\2026-07\\fertilizer_response_east_shewa.csv",
+      "file_type": "csv",
+      "file_ext": ".csv",
+      "size_bytes": 146,
+      "sha256": "fd66298407fd968fa499db7032084b40361632906bbae6039241b9d0df0bdbea",
+      "status": "needs_review",
+      "tags": [],
+      "license": null,
+      "access": null,
+      "domain": null,
+      "hub_role": null,
+      "spatial_coverage": null,
+      "temporal_coverage": null,
+      "missing_fields": [
+        "team",
+        "owner",
+        "license",
+        "access"
+      ],
+      "ingest_log": "Ingested 2026-07-29T09:33:55",
+      "created_at": "2026-07-29T06:33:55+00:00",
+      "updated_at": "2026-07-29T06:33:55+00:00",
+      "tables": [
+        {
+          "table_id": "tbl_2d5d2b0cb2d2",
+          "asset_id": "asset_3e7a95a26641",
+          "name": "data",
+          "kind": "table",
+          "n_rows": 5,
+          "n_cols": 4,
+          "columns": [
+            {
+              "name": "woreda",
+              "dtype": "str",
+              "non_null": 5,
+              "n_unique": 5,
+              "samples": [
+                "Adama",
+                "Bishoftu",
+                "Mojo",
+                "Modjo",
+                "Bora"
+              ]
+            },
+            {
+              "name": "crop",
+              "dtype": "str",
+              "non_null": 5,
+              "n_unique": 3,
+              "samples": [
+                "teff",
+                "teff",
+                "sorghum",
+                "maize",
+                "sorghum"
+              ]
+            },
+            {
+              "name": "n_rate_kg_ha",
+              "dtype": "int64",
+              "non_null": 5,
+              "n_unique": 3,
+              "samples": [
+                "64",
+                "64",
+                "41",
+                "92",
+                "41"
+              ]
+            },
+            {
+              "name": "yield_kg_ha",
+              "dtype": "int64",
+              "non_null": 5,
+              "n_unique": 5,
+              "samples": [
+                "2100",
+                "2250",
+                "2600",
+                "3800",
+                "2450"
+              ]
+            }
+          ],
+          "text_preview": null
+        }
+      ]
+    },
+    {
+      "asset_id": "asset_43df9c6747ba",
+      "title": "Advisory Methods Note",
+      "description": "East Shewa Fertilizer Advisory — Methods Note This note documents how woreda-level N-rate recommendations were derived for teff, sorghum, and maize in East Shewa zone, Ethiopia. Data sources",
+      "team": null,
+      "owner": null,
+      "contact": null,
+      "file_name": "advisory_methods_note.docx",
+      "file_path": "data\\processed\\unknown\\2026-07\\advisory_methods_note.docx",
+      "file_type": "word",
+      "file_ext": ".docx",
+      "size_bytes": 36813,
+      "sha256": "dfbae98869983b7605e07bb733ff6a6e52d91d1c38ce20e3f35655f3a9646d2b",
+      "status": "needs_review",
+      "tags": [],
+      "license": null,
+      "access": null,
+      "domain": null,
+      "hub_role": null,
+      "spatial_coverage": null,
+      "temporal_coverage": null,
+      "missing_fields": [
+        "team",
+        "owner",
+        "license",
+        "access"
+      ],
+      "ingest_log": "Ingested 2026-07-29T09:33:54",
+      "created_at": "2026-07-29T06:33:54+00:00",
+      "updated_at": "2026-07-29T06:33:54+00:00",
+      "tables": [
+        {
+          "table_id": "tbl_8b4989a32928",
+          "asset_id": "asset_43df9c6747ba",
+          "name": "document",
+          "kind": "document",
+          "n_rows": 4,
+          "n_cols": null,
+          "columns": [
+            {
+              "name": "East Shewa Fertilizer Advisory — Methods Note",
+              "dtype": "heading"
+            },
+            {
+              "name": "Data sources",
+              "dtype": "heading"
+            }
+          ],
+          "text_preview": "East Shewa Fertilizer Advisory — Methods Note\n\nThis note documents how woreda-level N-rate recommendations were derived for teff, sorghum, and maize in East Shewa zone, Ethiopia.\n\nData sources\n\nEthioSIS soil rasters, AEZ boundaries, and DST field trial data were combined using zonal statistics."
+        }
+      ]
+    }
+  ]
+}
