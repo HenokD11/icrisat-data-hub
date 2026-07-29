@@ -13,6 +13,7 @@ Run:  python -m hub.web.app      then open http://localhost:8000
 from __future__ import annotations
 
 import html
+import os
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, UploadFile
@@ -22,6 +23,11 @@ from ..catalog import Catalog
 from ..config import load_config
 from ..ingest import metadata as meta
 from ..ingest.pipeline import ingest_file
+
+# Optional shared-secret gate for when the page is exposed via a public tunnel:
+# set HUB_UPLOAD_TOKEN and share the link as https://<host>/?token=<secret>.
+# When unset (default local use) no token is required.
+UPLOAD_TOKEN = os.environ.get("HUB_UPLOAD_TOKEN", "")
 
 PAGE = """<!doctype html>
 <html lang="en">
@@ -77,6 +83,8 @@ drop.ondragleave = () => drop.classList.remove('over');
 drop.ondrop = e => {{ e.preventDefault(); drop.classList.remove('over');
   files = [...e.dataTransfer.files]; drop.textContent = files.map(f => f.name).join(', '); }};
 
+const urlToken = new URLSearchParams(location.search).get('token') || '';
+
 document.getElementById('meta').onsubmit = async e => {{
   e.preventDefault();
   if (!files.length) {{ alert('Choose at least one file'); return; }}
@@ -86,6 +94,7 @@ document.getElementById('meta').onsubmit = async e => {{
   for (const f of files) {{
     const fd = new FormData();
     fd.append('file', f);
+    fd.append('token', urlToken);
     for (const [k, v] of form.entries()) fd.append(k, v);
     const res = await fetch('/upload', {{ method: 'POST', body: fd }});
     const j = await res.json();
@@ -121,7 +130,13 @@ def create_app() -> FastAPI:
         contact: str = Form(""),
         description: str = Form(""),
         tags: str = Form(""),
+        token: str = Form(""),
     ):
+        if UPLOAD_TOKEN and token != UPLOAD_TOKEN:
+            return JSONResponse(
+                {"ok": False, "reason": "invalid or missing upload token"},
+                status_code=403,
+            )
         inbox = cfg.path("inbox")
         safe_name = Path(file.filename or "upload.bin").name
         dest = inbox / safe_name

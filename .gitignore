@@ -15,3 +15,6 @@ data/catalog/catalog.db
 Thumbs.db
 desktop.ini
 .vscode/
+
+# Local tools (tunnel binary)
+tools/
