@@ -1,8 +1,340 @@
 {
   "hub": "ICRISAT Data Hub",
-  "generated_at": "2026-07-29T10:53:07+00:00",
-  "n_assets": 7,
+  "generated_at": "2026-08-02T07:33:22+00:00",
+  "n_assets": 8,
   "assets": [
+    {
+      "asset_id": "asset_39fe35d18536",
+      "title": "EIA on-farm trials 2021–2025 (Ethiopia)",
+      "description": "Georeferenced on-farm crop/fertilizer trial records (2021–2025); farmer names and yellow-marked price/benefit/PFP fields removed before ingest",
+      "team": "HaFAS",
+      "owner": "HaFAS team",
+      "contact": null,
+      "file_name": "EIA_2021_to_2025_dataset.xlsx",
+      "file_path": "data\\processed\\HaFAS\\2026-08\\EIA_2021_to_2025_dataset.xlsx",
+      "file_type": "excel",
+      "file_ext": ".xlsx",
+      "size_bytes": 312614,
+      "sha256": "2b69cdf472e64e539abd474d54f8cf94a0a8ef600e8768bd1c9444e1f488dee7",
+      "status": "published",
+      "tags": [
+        "eia",
+        "on-farm",
+        "fertilizer",
+        "yield",
+        "ethiopia"
+      ],
+      "license": "ICRISAT internal use",
+      "access": "internal",
+      "domain": "Soil / Agronomy",
+      "hub_role": "ingest",
+      "spatial_coverage": "Ethiopia",
+      "temporal_coverage": "2021-2025",
+      "missing_fields": [],
+      "ingest_log": "Ingested 2026-08-02T10:26:48",
+      "created_at": "2026-08-02T07:26:48+00:00",
+      "updated_at": "2026-08-02T07:26:48+00:00",
+      "upload_channel": "sidecar",
+      "tables": [
+        {
+          "table_id": "tbl_b9defbb6d3d5",
+          "asset_id": "asset_39fe35d18536",
+          "name": "ALL2021 to 2025",
+          "kind": "table",
+          "n_rows": 2925,
+          "n_cols": 22,
+          "columns": [
+            {
+              "name": "Data source",
+              "dtype": "str",
+              "non_null": 2925,
+              "n_unique": 2,
+              "samples": [
+                "ICRISAT_EIA",
+                "ICRISAT_EIA",
+                "ICRISAT_EIA",
+                "ICRISAT_EIA",
+                "ICRISAT_EIA"
+              ]
+            },
+            {
+              "name": "Region",
+              "dtype": "str",
+              "non_null": 2925,
+              "n_unique": 7,
+              "samples": [
+                "Amhara",
+                "Amhara",
+                "Amhara",
+                "Amhara",
+                "Amhara"
+              ]
+            },
+            {
+              "name": "Zone",
+              "dtype": "str",
+              "non_null": 2556,
+              "n_unique": 17,
+              "samples": [
+                "East Gojam",
+                "East Gojam",
+                "East Gojam",
+                "East Gojam",
+                "East Gojam"
+              ]
+            },
+            {
+              "name": "District",
+              "dtype": "str",
+              "non_null": 2925,
+              "n_unique": 20,
+              "samples": [
+                "West Belesa",
+                "West Belesa",
+                "West Belesa",
+                "West Belesa",
+                "West Belesa"
+              ]
+            },
+            {
+              "name": "Kebele",
+              "dtype": "str",
+              "non_null": 2925,
+              "n_unique": 106,
+              "samples": [
+                "Abay Tera",
+                "Abay Tera",
+                "Abay Tera",
+                "Abay Tera",
+                "Abay Tera"
+              ]
+            },
+            {
+              "name": "Latitude",
+              "dtype": "float64",
+              "non_null": 2718,
+              "n_unique": 2219,
+              "samples": [
+                "12.445154",
+                "12.439603",
+                "12.446589",
+                "12.442847",
+                "12.44794"
+              ]
+            },
+            {
+              "name": "Longitude",
+              "dtype": "float64",
+              "non_null": 2718,
+              "n_unique": 2218,
+              "samples": [
+                "37.854245",
+                "37.852319",
+                "37.853733",
+                "37.853906",
+                "37.858769"
+              ]
+            },
+            {
+              "name": "Year",
+              "dtype": "int64",
+              "non_null": 2925,
+              "n_unique": 4,
+              "samples": [
+                "2021",
+                "2021",
+                "2021",
+                "2021",
+                "2021"
+              ]
+            },
+            {
+              "name": "Crop type",
+              "dtype": "str",
+              "non_null": 2925,
+              "n_unique": 3,
+              "samples": [
+                "Sorghum",
+                "Sorghum",
+                "Sorghum",
+                "Sorghum",
+                "Sorghum"
+              ]
+            },
+            {
+              "name": " Variety",
+              "dtype": "str",
+              "non_null": 2830,
+              "n_unique": 115,
+              "samples": [
+                "Melkam",
+                "Melkam",
+                "Melkam",
+                "Melkam",
+                "Melkam"
+              ]
+            },
+            {
+              "name": "Planting date(DD/MM/YYYY)",
+              "dtype": "object",
+              "non_null": 2551,
+              "n_unique": 234,
+              "samples": [
+                "2022-07-25 00:00:00",
+                "2022-07-25 00:00:00",
+                "2022-07-22 00:00:00",
+                "2022-07-22 00:00:00",
+                "2022-07-20 00:00:00"
+              ]
+            },
+            {
+              "name": "Harvesting date DD/MM/YYYY",
+              "dtype": "object",
+              "non_null": 2539,
+              "n_unique": 360,
+              "samples": [
+                "2022-10-13 00:00:00",
+                "2022-10-05 00:00:00",
+                "2022-10-11 00:00:00",
+                "2022-10-09 00:00:00",
+                "2022-10-05 00:00:00"
+              ]
+            },
+            {
+              "name": "Urea_Kgha",
+              "dtype": "float64",
+              "non_null": 2545,
+              "n_unique": 511,
+              "samples": [
+                "178.0",
+                "90.0",
+                "320.0",
+                "300.0",
+                "90.0"
+              ]
+            },
+            {
+              "name": "DAP_Kgha",
+              "dtype": "float64",
+              "non_null": 2914,
+              "n_unique": 482,
+              "samples": [
+                "95.49071618037135",
+                "95.49071618037135",
+                "95.49071618037135",
+                "95.49071618037135",
+                "95.49071618037135"
+              ]
+            },
+            {
+              "name": "N_Kgha",
+              "dtype": "float64",
+              "non_null": 2912,
+              "n_unique": 814,
+              "samples": [
+                "41.0",
+                "41.0",
+                "41.0",
+                "41.0",
+                "41.0"
+              ]
+            },
+            {
+              "name": "P_Kgha",
+              "dtype": "float64",
+              "non_null": 2914,
+              "n_unique": 504,
+              "samples": [
+                "15.732",
+                "15.732",
+                "15.732",
+                "15.732",
+                "15.732"
+              ]
+            },
+            {
+              "name": "P2O5_Kgha",
+              "dtype": "float64",
+              "non_null": 2912,
+              "n_unique": 499,
+              "samples": [
+                "36.0",
+                "36.0",
+                "36.0",
+                "36.0",
+                "36.0"
+              ]
+            },
+            {
+              "name": "precursor crops_1yrB",
+              "dtype": "str",
+              "non_null": 2256,
+              "n_unique": 60,
+              "samples": [
+                "teff",
+                "teff",
+                "teff",
+                "teff",
+                "teff"
+              ]
+            },
+            {
+              "name": "precursor crops_2yrB",
+              "dtype": "str",
+              "non_null": 2410,
+              "n_unique": 54,
+              "samples": [
+                "Wheat",
+                "Wheat",
+                "maize",
+                "Wheat",
+                "Wheat"
+              ]
+            },
+            {
+              "name": "Grain  yield Kg/ ha",
+              "dtype": "float64",
+              "non_null": 2925,
+              "n_unique": 768,
+              "samples": [
+                "1300.0",
+                "1925.0",
+                "2120.0",
+                "2325.0",
+                "1800.0"
+              ]
+            },
+            {
+              "name": "Biomass yield Kg/ ha",
+              "dtype": "float64",
+              "non_null": 2877,
+              "n_unique": 821,
+              "samples": [
+                "1680.0",
+                "4450.0",
+                "5454.2",
+                "6612.5",
+                "3066.7"
+              ]
+            },
+            {
+              "name": "Cropping system",
+              "dtype": "str",
+              "non_null": 1309,
+              "n_unique": 95,
+              "samples": [
+                "Wheat teff",
+                "Wheat teff",
+                "Wheat teff",
+                "Wheat teff",
+                "Wheat"
+              ]
+            }
+          ],
+          "text_preview": null
+        }
+      ]
+    },
     {
       "asset_id": "asset_19f078741db1",
       "title": "Wheat DST Nutrient-Response Trials (2026 compilation)",

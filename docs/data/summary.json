@@ -1,30 +1,30 @@
 {
-  "total_assets": 7,
+  "total_assets": 8,
   "by_status": {
-    "published": 5,
+    "published": 6,
     "needs_review": 2
   },
   "by_file_type": {
     "csv": 5,
-    "word": 1,
-    "excel": 1
+    "excel": 2,
+    "word": 1
   },
   "by_team": {
-    "HaFAS": 4,
+    "HaFAS": 5,
     "unspecified": 2,
     "Soil Intelligence": 1
   },
   "by_access": {
-    "internal": 5,
+    "internal": 6,
     "unspecified": 2
   },
   "by_upload_channel": {
     "inbox": 6,
-    "sidecar": 1
+    "sidecar": 2
   },
   "needs_review": 2,
   "hub": "ICRISAT Data Hub",
-  "generated_at": "2026-07-29T10:53:07+00:00",
+  "generated_at": "2026-08-02T07:33:22+00:00",
   "domain_definitions": {
     "Hazard": "Climate variables and indices that characterise physical hazard (rainfall, temperature, drought, flood extent).",
     "Hazard / Climate Services": "Operationally processed hazard products delivered as services (seasonal forecasts, advisories).",
