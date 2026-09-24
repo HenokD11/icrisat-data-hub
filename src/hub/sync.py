@@ -27,8 +27,9 @@ from urllib import request as urlrequest
 log = logging.getLogger(__name__)
 
 DEBOUNCE_SECONDS = 60
+# Only the public, filtered export — data/catalog/assets.json holds the full
+# internal catalogue and must never be pushed.
 PUSHED_FILES = (
-    "data/catalog/assets.json",
     "docs/data/assets.json",
     "docs/data/sources.json",
     "docs/data/summary.json",

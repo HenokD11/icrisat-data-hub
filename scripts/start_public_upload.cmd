@@ -1,16 +1,18 @@
 @echo off
-rem Start the upload web app + a public Cloudflare quick tunnel.
-rem Requires: set HUB_UPLOAD_TOKEN=<your-secret> before running (or edit below).
-rem Share the printed https://<random>.trycloudflare.com/?token=<your-secret> link.
+rem Expose the local web app through a Cloudflare quick tunnel.
+rem Sign-in is required, so WorkOS must be configured first (the dev login is
+rem never enabled here):
+rem   set WORKOS_API_KEY=sk_...        set WORKOS_CLIENT_ID=client_...
+rem   set HUB_SECRET_KEY=<long random> set HUB_BASE_URL=https://<tunnel-host>
+rem and add https://<tunnel-host>/auth/callback as a redirect in WorkOS.
 setlocal
 cd /d "%~dp0.."
 set PYTHONPATH=src
+set HUB_DEV_LOGIN=
 
-if "%HUB_UPLOAD_TOKEN%"=="" (
+if "%WORKOS_API_KEY%"=="" (
   echo.
-  echo  ERROR: set an upload token first, e.g.:
-  echo     set HUB_UPLOAD_TOKEN=my-team-secret-2026
-  echo     scripts\start_public_upload.cmd
+  echo  ERROR: set WORKOS_API_KEY / WORKOS_CLIENT_ID / HUB_SECRET_KEY first - see this file.
   echo.
   exit /b 1
 )
@@ -22,12 +24,11 @@ if not exist "tools\cloudflared.exe" (
   exit /b 1
 )
 
-echo Starting upload web app on http://localhost:8010 ...
+echo Starting web app on http://localhost:8010 ...
 start "icrisat-hub-web" /min ".venv\Scripts\python.exe" -m hub.web.app
 timeout /t 4 /nobreak >nul
 
-echo Starting public tunnel - your shareable link appears below
-echo (append ?token=%HUB_UPLOAD_TOKEN% to it when sharing).
+echo Starting public tunnel - share the printed https URL.
 echo Keep this window open; closing it kills the tunnel.
 echo.
 "tools\cloudflared.exe" tunnel --url http://localhost:8010

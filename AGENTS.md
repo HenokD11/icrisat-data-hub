@@ -1,5 +1,17 @@
 # AGENTS.md — ICRISAT Data Hub
 
+## Testing
+
+- NEVER write unit tests after you write code.
+- Highly prefer E2E tests as the sole testing mechanism. Use them to verify complex features work. At the end of E2E tests, produce a verifiable and repeatable artifact.
+- If you must test a system in isolation, FIRST write all the ways it could fail, THEN write the code.
+
+When implementing with test-driven development:
+
+- Tautological tests considered harmful.
+- Change-detector tests considered harmful.
+- Do not create regression tests for bug fixes without a genuine gap in behavior testing.
+
 ## What this is
 Federation-first data hub for ICRISAT: teams drop CSV/Excel/Word files into a
 watched inbox or a web page; a pipeline ingests and catalogues them (SQLite +
@@ -39,7 +51,23 @@ normalised assets.json → publish).
   New types: add a reader + register the extension in `config/hub.yaml` and
   `detect_file_type`.
 - MCP tools must never mutate data; `query_asset` is read-only SELECT via
-  DuckDB with a row cap.
+  DuckDB with a row cap. MCP serves published assets only; `--http` serves
+  open ones only.
+- Review workflow: statuses/transitions live in `catalog.TRANSITIONS`; only
+  `Catalog.transition` changes status (plus the automatic needs_review ->
+  submitted once metadata is complete). Nothing self-publishes.
+- Permissions live in `src/hub/access.py`. Roles = `access_control` in
+  hub.yaml + admin-UI roles/categories in SQLite, merged by
+  `access.with_db_roles` (the web app's `P()`, cached and cleared on admin
+  changes). Web routes ask it; don't inline role checks.
+- API tokens: only SHA-256 hashes are stored; bearer requests get JSON/401,
+  never redirects.
+- Public outputs (`hub.pages` -> docs/data, sync) carry published + open
+  assets only; `data/catalog/assets.json` is the full internal export and is
+  never committed or pushed.
+- Web uploads stream to `data/staging`, never the watched inbox.
+- E2E: `tests/test_e2e_web.py` runs the real server (dev login) against a
+  temp `HUB_CONFIG`; its report is `tests/artifacts/e2e_web_report.json`.
 
 ## Testing
 pytest suite in `tests/` builds fixtures (CSV/XLSX/DOCX) in tmp dirs — it

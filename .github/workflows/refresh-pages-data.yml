@@ -1,18 +1,17 @@
 name: Refresh catalogue app data
 
-# Regenerates docs/data/*.json (consumed by the GitHub Pages dashboard)
-# whenever the published catalogue or the YAML source pointers change on main.
+# Regenerates docs/data/*.json (consumed by the public GitHub Pages dashboard)
+# whenever the YAML source pointers or the exporter change on main.
 #
-# In CI there is no local SQLite catalogue (data/catalog/catalog.db is
-# gitignored local working state), so `python -m hub.pages` reads the
-# committed data/catalog/assets.json instead — that file is the catalogue's
-# published export and the source of truth on GitHub.
+# In CI there is no SQLite catalogue, so `python -m hub.pages` re-filters the
+# already-published docs/data/assets.json (published + open only). The full
+# internal catalogue (data/catalog/assets.json) is never committed; the
+# deployed web app pushes docs/data after each publish (hub/sync.py).
 
 on:
   push:
     branches: [main]
     paths:
-      - "data/catalog/assets.json"
       - "sources/**"
       - "src/hub/pages.py"
       - ".github/workflows/refresh-pages-data.yml"

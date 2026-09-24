@@ -9,6 +9,7 @@ paths:
   inbox: "data/inbox"            # teams drop files here — watched automatically
   processed: "data/processed"    # successfully ingested files (organised by team/month)
   failed: "data/failed"          # files that failed ingestion (+ .error.txt)
+  staging: "data/staging"        # web uploads land here (NOT the watched inbox)
   catalog_db: "data/catalog/catalog.db"
   catalog_json: "data/catalog/assets.json"   # exported catalogue (like CDH assets.json)
   sources_dir: "sources"         # YAML pointers to external / federated sources
@@ -26,6 +27,8 @@ ingest:
   settle_seconds: 2.0
   # What happens to a file after successful ingestion: move | keep
   after_ingest: "move"
+  # Web uploads larger than this are rejected
+  max_upload_mb: 200
 
 # Controlled vocabularies (extend freely — used for normalisation hints)
 vocabulary:
@@ -52,19 +55,52 @@ vocabulary:
     Soil / Agronomy: "Soil properties, fertility, and agronomic trial or recommendation datasets."
     Socio-economics: "Household, market, and livelihood data used in targeting and impact analysis."
     Multi-domain: "Assets that span two or more domains without a clear primary classification."
+  # open = anyone; internal = signed-in users from access_control.org_domains;
+  # restricted = only people/domains granted on the dataset's Share panel.
   access:
     - open
     - internal
     - restricted
+  # Why a dataset is restricted (CGIAR Open & FAIR policy exceptions)
+  access_reasons:
+    - Data sharing / restricted-use agreement
+    - Contains personal data (PII)
+    - Confidentiality obligation
+    - Embargo (pending publication, max 12 months)
+  licenses:
+    - CC-BY-4.0
+    - CC0-1.0
+    - CC-BY-NC-4.0
+    - ICRISAT internal use only
   hub_role:
     - federation
     - ingest
     - derived
     - reference
 
+# Who reviews what. Sign-in is by verified email (WorkOS AuthKit in production).
+# admins curate every category; each category lists its own curators.
+# A submitted dataset in a category with no curators goes to the admins.
+access_control:
+  org_domains: ["icrisat.org"]   # "internal" datasets are visible to these
+  admins:
+    - henok.desalegn@icrisat.org
+  categories:
+    Soil & Agronomy: []
+    Crop Improvement & Breeding: []
+    Climate & Weather: []
+    Socio-economics & Markets: []
+    Geospatial & Remote Sensing: []
+    Monitoring, Evaluation & Learning: []
+    Other: []
+
 web:
   host: "0.0.0.0"
   port: 8010
+  # Public URL of the deployed web app (upload/review). Shown on the Pages
+  # dashboard; HUB_BASE_URL overrides it. Leave blank to hide those links.
+  app_url: ""
+  dashboard_url: "https://henokd11.github.io/icrisat-data-hub/"
 
 mcp:
   http_host: "0.0.0.0"

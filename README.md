@@ -13,26 +13,59 @@ Phase 1 supports **CSV, Excel (.xlsx/.xls), and Word (.docx)** files.
 External data is registered as **YAML pointers** (federation: the hub points
 to data where it lives rather than copying it).
 
-## For teams: how to share data (30 seconds, no skills needed)
+## For teams: how to share data
 
-**Option A - drop folder.** Copy your file into `data/inbox/` (this can be a
-shared network drive or a OneDrive-synced folder). That's it. The pipeline
-picks it up automatically, catalogues it, and flags anything it couldn't
-figure out for review.
+Every dataset goes **upload → describe → curator review → published**.
+Nothing is public until the curator for its category approves it.
 
-**Option B - web page.** Run `scripts\start_web.cmd` once, open
-http://localhost:8010, drag & drop, optionally fill 5 small fields.
+**1. Web page (recommended, anyone with an email).** Sign in, open
+**Upload**, drop one or more files, pick a **category**, fill the short form
+(description, team, licence, who can download) and press *Submit for review*.
+The curator for that category is emailed. Several files uploaded together
+share one description and become separate datasets. Missing details? Use
+*Upload now, add details later* and finish them on the dataset's **Edit** page.
 
-**Option C - with metadata.** Drop a tiny sidecar next to your file:
+**2. Shared drop folder (ICRISAT network).** Copy files into `data/inbox/`.
+Add `yield_trials_2025.meta.yaml` next to a file (or one `metadata.yaml` for a
+batch) with `title, description, team, owner, owner_email, category, license,
+access` and it goes straight to the review queue; otherwise it waits as
+*Needs details* with a pre-filled `*_metadata_review.yaml` to complete.
+
+**Statuses:** Needs details → In review → Published (or Returned with the
+curator's comment → fix → resubmit). Published datasets can be Withdrawn.
+
+**Who can download** (set on upload, changeable on the dataset's Share panel):
+
+| Level | Files available to |
+|---|---|
+| Open *(CGIAR default)* | everyone, no sign-in |
+| ICRISAT only | signed-in users with an `access_control.org_domains` email |
+| Restricted | people/domains on the Share list — add one email, paste a list, upload a CSV, or a whole `@cgiar.org` domain; optional expiry. Needs a reason; personal data forces this level. Others can **Request access**; owners/curators accept or decline with a reason. |
+
+Descriptions of published datasets are always visible (CGIAR Open & FAIR
+policy); only the files are gated. The public GitHub Pages dashboard and the
+HTTP MCP server show **published + open** datasets only.
+
+**Roles:** admins manage the **Admin** page — add categories, add/remove
+curators per category (paste several emails at once) and other admins; changes
+apply immediately and are logged. `config/hub.yaml` → `access_control` holds
+the bootstrap admins (not removable from the UI, so nobody is locked out) and
+any curators you prefer to keep in config. A category with no curators goes
+to the admins.
+
+**Scripts / API:** *My datasets → API tokens* creates a personal token (shown
+once, stored hashed, revocable). Then:
 
 ```
-yield_trials_2025.csv
-yield_trials_2025.meta.yaml     # title, team, owner, description, tags, ...
+curl -H "Authorization: Bearer $HUB_TOKEN" -F files=@trials.csv      -F category="Soil & Agronomy" -F team="Soil Intelligence"      -F description="On-farm trials 2025" -F license=CC-BY-4.0 -F access=open      https://<hub>/upload
 ```
 
-or one `metadata.yaml` for a batch of files. Incomplete uploads get a
-pre-filled `*_metadata_review.yaml` written next to the processed file -
-complete it and drop it back in the inbox (or edit via the review CLI).
+returns JSON per file (dataset id, status, missing fields). The same header
+works for `GET /api/assets` and `GET /datasets/<id>/download`.
+
+**Access report:** every download is logged; owners and curators see counts
+in the dataset's History and can download an access report CSV (grants,
+requests, downloads).
 
 ## Setup
 
@@ -48,7 +81,7 @@ pip install -r requirements.txt
 |---|---|---|
 | Inbox watcher | `scripts\start_watcher.cmd` or `python -m hub.watcher` | auto-ingest dropped files |
 | One-off scan | `python -m hub.ingest.pipeline --scan` | scheduled/manual ingest |
-| Web upload + catalogue | `scripts\start_web.cmd` or `python -m hub.web.app` | http://localhost:8010 |
+| Web app (upload, review, share) | `scripts\start_web.cmd` | http://localhost:8010 (dev login) |
 | MCP server (stdio) | `python -m hub.mcp_server.server` | local LLM agents |
 | MCP server (HTTP) | `python -m hub.mcp_server.server --http` | http://localhost:8100/mcp for other machines |
 | Validate YAML pointers | `python -m hub.sources` | check `sources/*.yaml` |
@@ -95,30 +128,31 @@ Each external dataset/API/database gets one small YAML in `sources/` - see
 `sources/README.md` and `sources/examples/`. The hub registers and exposes
 these through the MCP server without copying the data.
 
-## Deploy online (shareable upload link)
+## Deploy online
 
-The repo is deploy-from-GitHub ready (Dockerfile included) — no local tooling
-needed. Recommended host: **Railway** (persistent volumes, permanent domain,
-~$5/mo hobby plan covers app + 1 GB volume).
+The repo is deploy-from-GitHub ready (Dockerfile included). Recommended host:
+**Railway** (persistent volume, permanent domain).
 
-1. **railway.app** -> log in with GitHub -> **New Project** -> **Deploy from
-   GitHub repo** -> select `icrisat-data-hub` (Dockerfile is auto-detected).
-2. **Add a volume**: service -> Settings -> Volumes -> mount at `/data` (1 GB).
-   Raw uploads and the SQLite catalogue live there - internal data never
-   touches GitHub.
-3. **Set variables** (service -> Variables):
-   - `HUB_UPLOAD_TOKEN` = a shared secret - the upload link carries it as
-     `?token=...`
-   - `GITHUB_TOKEN` = fine-grained PAT, *contents: read/write* on this repo
-     only (github.com -> Settings -> Developer settings -> Fine-grained tokens)
-   - `GITHUB_REPO` = `HenokD11/icrisat-data-hub`
-   - `GITHUB_BRANCH` = `main` (or the branch Pages builds from)
-4. **Generate the public domain**: Settings -> Networking -> Generate Domain.
-5. Share `https://<your-domain>/?token=<HUB_UPLOAD_TOKEN>` with teams.
+1. **railway.app** -> New Project -> Deploy from GitHub repo -> `icrisat-data-hub`.
+2. **Volume** mounted at `/data` — raw uploads and the SQLite catalogue live
+   there; back it up (e.g. nightly copy of `/data/catalog/catalog.db`).
+3. **Sign-in (WorkOS AuthKit, free tier):** create a WorkOS project ->
+   *Authentication* -> enable **Email + Magic Auth** (and Google/Microsoft if
+   wanted) -> *Redirects* -> add `https://<your-domain>/auth/callback`.
+4. **Variables:**
 
-After every upload the host pushes only the catalogue JSON (never raw files)
-to the repo, so the Pages dashboard refreshes automatically. Without
-`GITHUB_TOKEN` the sync is a no-op (local dev mode).
+   | Variable | Value |
+   |---|---|
+   | `WORKOS_API_KEY`, `WORKOS_CLIENT_ID` | from the WorkOS dashboard |
+   | `HUB_BASE_URL` | `https://<your-domain>` |
+   | `HUB_SECRET_KEY` | long random string (signs session cookies) |
+   | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | any SMTP relay, for review/access emails (optional — logged if unset) |
+   | `GITHUB_TOKEN`, `GITHUB_REPO`, `GITHUB_BRANCH` | optional: push the public dashboard JSON after each publish |
+
+5. Settings -> Networking -> Generate Domain, then share `https://<your-domain>`.
+
+`HUB_DEV_LOGIN=1` (used by `scripts\start_web.cmd`) gives a password-less
+email login for local development only; it is ignored when WorkOS is set.
 
 ## GitHub Pages catalogue app
 

@@ -54,12 +54,10 @@
     <article class="kpi"><span class="kpi-label">Assets in view</span><strong id="kpiAssets">—</strong><span class="kpi-foot" id="kpiAssetsFoot"></span></article>
     <article class="kpi"><span class="kpi-label">Teams</span><strong id="kpiTeams">—</strong><span class="kpi-foot">contributing</span></article>
     <article class="kpi"><span class="kpi-label">Open access</span><strong id="kpiOpen">—</strong><span class="kpi-foot">share of view</span></article>
-    <button type="button" class="kpi kpi-accent" id="kpiPublishedCard" title="Show published assets in Explore">
-      <span class="kpi-label">Published</span><strong id="kpiPublished">—</strong><span class="kpi-foot">metadata complete — click to view</span>
-    </button>
-    <button type="button" class="kpi kpi-warn" id="kpiReviewCard" title="Show assets needing review in Explore">
-      <span class="kpi-label">Needs review</span><strong id="kpiReview">—</strong><span class="kpi-foot">metadata gaps — click to view</span>
-    </button>
+    <article class="kpi kpi-accent"><span class="kpi-label">Categories</span><strong id="kpiCats">—</strong><span class="kpi-foot">covered in view</span></article>
+    <a class="kpi kpi-warn" id="kpiContribute" href="#" target="_blank" rel="noopener" style="text-decoration:none">
+      <span class="kpi-label">Share your data</span><strong>Upload →</strong><span class="kpi-foot">reviewed by a curator before publishing</span>
+    </a>
   </section>
 
   <div class="layout">
@@ -101,12 +99,12 @@
           </article>
 
           <article class="panel span-2">
-            <div class="panel-head"><div><h3>Assets per team</h3><p class="panel-sub">Bar length = assets contributed, split by catalogue status. Click a row to open in Explore.</p></div></div>
+            <div class="panel-head"><div><h3>Assets per team</h3><p class="panel-sub">Bar length = published datasets contributed. Click a row to open in Explore.</p></div></div>
             <div id="teamBars" class="strength-list"></div>
           </article>
 
           <article class="panel">
-            <div class="panel-head"><div><h3>Domain mix</h3></div></div>
+            <div class="panel-head"><div><h3>Category mix</h3></div></div>
             <div class="chart-wrap"><canvas id="domainChart"></canvas></div>
           </article>
 
@@ -136,7 +134,7 @@
                   <th data-sort="team" class="sortable">Team</th>
                   <th data-sort="file_type" class="sortable">Type</th>
                   <th data-sort="access" class="sortable">Access</th>
-                  <th data-sort="status" class="sortable">Status</th>
+                  <th data-sort="category" class="sortable">Category</th>
                   <th data-sort="tags" class="sortable">Tags</th>
                   <th data-sort="created_at" class="sortable">Added</th>
                 </tr></thead>
@@ -151,14 +149,17 @@
       <section class="view" id="view-upload" data-view="upload">
         <div class="view-grid">
           <article class="panel span-2 panel-hero">
-            <div class="panel-head"><div><h3>How data arrives</h3><p class="panel-sub">Which upload channel teams use — drop-folder, web form, or fully-documented sidecar upload. The goal: as much as possible through the zero-effort channels.</p></div></div>
+            <div class="panel-head"><div><h3>How data arrives</h3><p class="panel-sub">Upload channel of the published datasets — the web form, the shared drop folder, or a drop with a metadata sidecar.</p></div></div>
             <div class="chart-wrap tall"><canvas id="channelChart"></canvas></div>
           </article>
 
           <article class="panel">
-            <div class="panel-head"><div><h3>Metadata completeness</h3><p class="panel-sub">Share of assets whose record is complete at a glance.</p></div></div>
-            <div id="completeness" class="completeness"></div>
-            <div id="missingFields" class="missing-fields"></div>
+            <div class="panel-head"><div><h3>How publishing works</h3><p class="panel-sub">Only reviewed, open datasets appear on this public site.</p></div></div>
+            <div class="guide-list">
+              <div class="guide-card"><h4>1 · Upload</h4><p>Sign in to the data hub (any email), drop files and pick a category.</p></div>
+              <div class="guide-card"><h4>2 · Review</h4><p>The category's curator checks the description, licence and access level, then publishes or returns it with comments.</p></div>
+              <div class="guide-card"><h4>3 · Share</h4><p>Open datasets show here. ICRISAT-only and restricted ones stay in the hub, where owners grant access by email, list, CSV or domain, and others can request it.</p></div>
+            </div>
           </article>
 
           <article class="panel span-2">
@@ -167,19 +168,19 @@
           </article>
 
           <article class="panel">
-            <div class="panel-head"><div><h3>Add your data — 3 ways</h3><p class="panel-sub">No special skills needed for any of them.</p></div></div>
+            <div class="panel-head"><div><h3>Add your data — 3 ways</h3><p class="panel-sub">All three go through the same curator review.</p></div></div>
             <div class="guide-list">
               <div class="guide-card">
-                <h4>1 · Drop folder <span class="ease ease-1">zero effort</span></h4>
-                <p>Copy the file into the shared <code>data/inbox/</code> folder. The pipeline picks it up automatically, infers what it can, and flags gaps for review.</p>
+                <h4>1 · Web upload <span class="ease ease-1">recommended</span></h4>
+                <p>Sign in, drag &amp; drop one or more files, choose a category and fill a short form. <a id="uploadLink" href="#" target="_blank" rel="noopener">Open the upload page ↗</a></p>
               </div>
               <div class="guide-card">
-                <h4>2 · Web page <span class="ease ease-2">30 seconds</span></h4>
-                <p>Drag &amp; drop on the upload page and optionally fill five small fields (team, name, description, tags, contact).</p>
+                <h4>2 · Script / API <span class="ease ease-2">automation</span></h4>
+                <p>Create a personal API token in the hub and <code>POST /upload</code> with <code>curl</code>, R or Python.</p>
               </div>
               <div class="guide-card">
-                <h4>3 · Sidecar metadata <span class="ease ease-3">fully documented</span></h4>
-                <p>Drop a tiny <code>myfile.meta.yaml</code> next to the data file and the asset is published immediately, no review round-trip.</p>
+                <h4>3 · Drop folder <span class="ease ease-3">ICRISAT network</span></h4>
+                <p>Copy files into the shared inbox with a <code>name.meta.yaml</code> (category, owner_email, licence…) to go straight to review.</p>
               </div>
             </div>
           </article>
@@ -210,6 +211,7 @@
       <p class="footer-note">
         Generated programmatically from <a href="data/assets.json"><code>assets.json</code></a> —
         no hand-typed numbers. Catalogue generated <span id="genStamp"></span>.<br>
+        Looking for internal or restricted data? Ask in the data hub.<br>
         Feedback or a dataset to register?
         <a href="https://github.com/HenokD11/icrisat-data-hub/issues/new" target="_blank" rel="noopener">Open an issue</a>.
       </p>

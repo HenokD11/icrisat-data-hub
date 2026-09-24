@@ -1,28 +1,12 @@
 {
-  "total_assets": 14,
-  "by_status": {
-    "needs_review": 8,
-    "published": 6
-  },
-  "by_file_type": {
-    "csv": 9,
-    "excel": 4,
-    "word": 1
-  },
-  "by_team": {
-    "ICRISAT": 14
-  },
-  "by_access": {
-    "unspecified": 8,
-    "internal": 6
-  },
-  "by_upload_channel": {
-    "inbox": 12,
-    "sidecar": 2
-  },
-  "needs_review": 8,
+  "total_assets": 0,
+  "by_status": {},
+  "by_file_type": {},
+  "by_team": {},
+  "by_access": {},
+  "needs_review": 0,
   "hub": "ICRISAT Data Hub",
-  "generated_at": "2026-08-05T06:26:58+00:00",
+  "generated_at": "2026-09-24T06:39:42+00:00",
   "domain_definitions": {
     "Hazard": "Climate variables and indices that characterise physical hazard (rainfall, temperature, drought, flood extent).",
     "Hazard / Climate Services": "Operationally processed hazard products delivered as services (seasonal forecasts, advisories).",
@@ -34,5 +18,6 @@
     "Soil / Agronomy": "Soil properties, fertility, and agronomic trial or recommendation datasets.",
     "Socio-economics": "Household, market, and livelihood data used in targeting and impact analysis.",
     "Multi-domain": "Assets that span two or more domains without a clear primary classification."
-  }
+  },
+  "app_url": ""
 }

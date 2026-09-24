@@ -15,14 +15,14 @@ const PALETTE = [GREEN, ORANGE, GREEN_MID, ORANGE_LIGHT, GREEN_LIGHT, "#FBC894",
 const FILTER_DIMS = [
   ["team", "Team"],
   ["file_type", "File type"],
-  ["status", "Status"],
+  ["category", "Category"],
   ["access", "Access"],
   ["domain", "Domain"],
 ];
 
 const state = {
   assets: [], sources: [], summary: {},
-  filters: { q: "", team: new Set(), file_type: new Set(), status: new Set(), access: new Set(), domain: new Set() },
+  filters: { q: "", team: new Set(), file_type: new Set(), category: new Set(), access: new Set(), domain: new Set() },
   sortKey: "created_at", sortDir: -1,
   charts: {},
 };
@@ -42,6 +42,10 @@ async function load() {
   state.assets = assetsPayload.assets || [];
   state.sources = sourcesPayload.sources || [];
   state.summary = summary;
+  const app = (summary.app_url || "").replace(/\/$/, "");
+  for (const id of ["#kpiContribute", "#uploadLink"]) {
+    if (app) $(id).href = app + "/upload"; else $(id).style.display = "none";
+  }
   $("#genStamp").textContent = assetsPayload.generated_at || "";
 
   buildFilterRail();
@@ -134,15 +138,13 @@ function renderActiveChips() {
 function renderKPIs(view) {
   const total = state.assets.length;
   const open = view.filter((a) => a.access === "open").length;
-  const pub = view.filter((a) => a.status === "published").length;
-  const rev = view.filter((a) => a.status === "needs_review").length;
+  const cats = new Set(view.map((a) => a.category).filter(Boolean)).size;
   const teams = new Set(view.map((a) => a.team).filter(Boolean)).size;
   $("#kpiAssets").textContent = view.length;
   $("#kpiAssetsFoot").textContent = view.length === total ? "whole portfolio" : `of ${total} total`;
   $("#kpiTeams").textContent = teams;
   $("#kpiOpen").textContent = view.length ? Math.round((open / view.length) * 100) + "%" : "—";
-  $("#kpiPublished").textContent = pub;
-  $("#kpiReview").textContent = rev;
+  $("#kpiCats").textContent = cats;
 }
 
 /* ---------------- charts registry ---------------- */
@@ -209,13 +211,12 @@ function renderOverview(view) {
   if (view.length) {
     const open = view.filter((a) => a.access === "open").length;
     const restr = view.filter((a) => a.access === "restricted").length;
-    const rev = view.filter((a) => a.status === "needs_review").length;
+    const [topCat, topCatN] = countsBy(view, "category")[0] || [];
     const [topTeam, topN] = countsBy(view, "team")[0] || [];
     const [topType, topTypeN] = countsBy(view, "file_type")[0] || [];
     const newest = [...view].sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))[0];
     insights.push(`<b>${open} of ${view.length}</b> assets (${Math.round((open / view.length) * 100)}%) are <b>open access</b>${restr ? `; <b>${restr}</b> restricted` : ""}.`);
-    if (rev) insights.push(`<b>${rev}</b> asset${rev > 1 ? "s" : ""} still need${rev > 1 ? "" : "s"} <b>metadata review</b> — completing them lifts the whole catalogue to published.`);
-    else insights.push(`Every asset in view has <b>complete metadata</b> — the catalogue is fully published.`);
+    if (topCat && topCat !== "unspecified") insights.push(`<b>${esc(topCat)}</b> is the best-covered category (<b>${topCatN}</b> dataset${topCatN > 1 ? "s" : ""}).`);
     if (topTeam && topTeam !== "unspecified") insights.push(`<b>${esc(topTeam)}</b> is the largest contributor in view with <b>${topN}</b> asset${topN > 1 ? "s" : ""}.`);
     if (topType) insights.push(`<b>${esc(topType)}</b> is the most common format (<b>${topTypeN}</b> asset${topTypeN > 1 ? "s" : ""}).`);
     if (newest) insights.push(`Newest addition: <b>${esc(newest.title)}</b> (${String(newest.created_at || "").slice(0, 10)}, via ${esc(CHANNEL_LABELS[newest.upload_channel] || label(newest.upload_channel))}).`);
@@ -228,14 +229,11 @@ function renderOverview(view) {
   const byTeam = countsBy(view, "team");
   const maxTeam = Math.max(1, ...byTeam.map(([, n]) => n));
   $("#teamBars").innerHTML = byTeam.map(([t, n]) => {
-    const pubN = view.filter((a) => label(a.team) === t && a.status === "published").length;
-    const revN = n - pubN;
     const w = (k) => Math.max(0, (k / maxTeam) * 100);
-    return `<div class="strength-row" data-team="${esc(t)}" title="${esc(t)} — ${pubN} published, ${revN} needs review. Click to explore.">
+    return `<div class="strength-row" data-team="${esc(t)}" title="${esc(t)} — ${n} published datasets. Click to explore.">
       <span class="strength-name">${esc(t)}</span>
       <span class="strength-track">
-        <span class="strength-seg pub" style="width:${w(pubN)}%"></span>
-        <span class="strength-seg rev" style="width:${w(revN)}%"></span>
+        <span class="strength-seg pub" style="width:${w(n)}%"></span>
       </span>
       <span class="strength-num">${n}</span></div>`;
   }).join("") || '<p class="muted">No assets in view.</p>';
@@ -251,7 +249,7 @@ function renderOverview(view) {
   );
 
   // domain mix + access + type charts
-  const dom = countsBy(view, "domain");
+  const dom = countsBy(view, "category");
   doughnut("domainChart", dom.map((d) => d[0]), dom.map((d) => d[1]), PALETTE);
   const accOrder = ["open", "internal", "restricted", "unspecified"].filter((k) => view.some((a) => label(a.access) === k));
   doughnut("accessChart", accOrder, accOrder.map((k) => view.filter((a) => label(a.access) === k).length), accOrder.map((k) => ACCESS_COLORS[k]));
@@ -279,7 +277,7 @@ function renderExplore(view) {
       <td>${esc(a.team || "—")}</td>
       <td>${esc(a.file_type)}</td>
       <td>${accessBadge(a.access)}</td>
-      <td>${a.status === "published" ? '<span class="badge b-pub">published</span>' : '<span class="badge b-rev">needs review</span>'}</td>
+      <td>${esc(a.category || "—")}</td>
       <td>${(a.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</td>
       <td>${esc(String(a.created_at || "").slice(0, 10))}</td>
     </tr>`).join("");
@@ -298,7 +296,7 @@ function openDrawer(assetId) {
   const a = state.assets.find((x) => x.asset_id === assetId);
   if (!a) return;
   const meta = [
-    ["Team", a.team], ["Owner", a.owner], ["Contact", a.contact],
+    ["Category", a.category], ["Team", a.team], ["Owner", a.owner], ["Contact", a.contact],
     ["File", `${a.file_name} (${((a.size_bytes || 0) / 1024).toFixed(1)} KB)`],
     ["Upload channel", CHANNEL_LABELS[a.upload_channel] || label(a.upload_channel)],
     ["License", a.license], ["Domain", a.domain], ["Hub role", a.hub_role],
@@ -313,18 +311,18 @@ function openDrawer(assetId) {
     ).join("");
     return `<div class="d-schema"><b>${esc(t.name)}</b> — ${esc(t.n_rows)} rows × ${esc(t.n_cols)} columns${cols}</div>`;
   }).join("");
-  const missing = (a.missing_fields || []).length
-    ? `<div class="insight warn">Missing metadata: <b>${esc(a.missing_fields.join(", "))}</b> — complete the review template next to the processed file.</div>` : "";
+  const app = (state.summary.app_url || "").replace(/\/$/, "");
+  const hubLink = app
+    ? `<p><a class="btn" style="text-decoration:none" href="${esc(app)}/datasets/${esc(a.asset_id)}" target="_blank" rel="noopener">Open in the data hub · download ↗</a></p>` : "";
   $("#drawerBody").innerHTML = `
     <h2>${esc(a.title)}</h2>
     <div style="display:flex;gap:.3rem;flex-wrap:wrap;margin:.3rem 0 .2rem">
-      ${a.status === "published" ? '<span class="badge b-pub">published</span>' : '<span class="badge b-rev">needs review</span>'}
       ${accessBadge(a.access)}
       <span class="badge b-${esc(label(a.upload_channel))}">${esc(CHANNEL_LABELS[a.upload_channel] || label(a.upload_channel))}</span>
       ${(a.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("")}
     </div>
     ${a.description ? `<p style="font-size:.85rem;color:#444">${esc(a.description)}</p>` : ""}
-    ${missing}
+    ${hubLink}
     <dl class="d-meta">${meta.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>
     <div class="d-section"><h3>Schema</h3>${schema || '<p class="muted">No tables profiled.</p>'}</div>`;
   $("#drawer").classList.add("open");
@@ -353,32 +351,6 @@ function renderUpload(view) {
         tooltip: { callbacks: { label: (c) => ` ${c.raw} asset${c.raw === 1 ? "" : "s"} via ${c.label}` } } },
       scales: { y: { ticks: { precision: 0 }, beginAtZero: true } } },
   });
-
-  // completeness
-  const pub = view.filter((a) => a.status === "published").length;
-  const rev = view.length - pub;
-  const pct = (k) => (view.length ? Math.round((k / view.length) * 100) : 0);
-  $("#completeness").innerHTML = view.length ? `
-    <div class="comp-track">
-      ${pub ? `<div class="comp-seg pub" style="width:${pct(pub)}%">${pct(pub)}%</div>` : ""}
-      ${rev ? `<div class="comp-seg rev" style="width:${pct(rev)}%">${pct(rev)}%</div>` : ""}
-    </div>
-    <div class="comp-legend">
-      <span><span class="dot" style="background:${GREEN}"></span>published (${pub})</span>
-      <span><span class="dot" style="background:${ORANGE}"></span>needs review (${rev})</span>
-    </div>` : '<p class="muted">No assets in view.</p>';
-
-  // which fields are most often missing — where upload friction sits
-  const mf = {};
-  for (const a of view) for (const f of a.missing_fields || []) mf[f] = (mf[f] || 0) + 1;
-  const mfRows = Object.entries(mf).sort((x, y) => y[1] - x[1]);
-  const mfMax = Math.max(1, ...mfRows.map(([, n]) => n));
-  $("#missingFields").innerHTML = mfRows.length ? `
-    <h4>Most-missing metadata — where teams need the least friction</h4>
-    ${mfRows.map(([f, n]) => `<div class="mf-row"><span>${esc(f)}</span>
-      <span class="mf-track"><span class="mf-seg" style="width:${(n / mfMax) * 100}%"></span></span>
-      <span class="mf-num">${n}</span></div>`).join("")}`
-    : view.length ? "<h4>No metadata gaps in view — everything fully documented.</h4>" : "";
 
   // timeline (cumulative)
   const byDate = {};
@@ -425,7 +397,7 @@ function renderSources() {
 /* ---------------- CSV export ---------------- */
 
 function exportCsv() {
-  const cols = ["asset_id", "title", "team", "owner", "file_type", "status", "access", "domain", "upload_channel", "tags", "file_name", "created_at"];
+  const cols = ["asset_id", "title", "category", "team", "owner", "file_type", "access", "license", "domain", "upload_channel", "tags", "file_name", "created_at"];
   const q = (v) => `"${String(Array.isArray(v) ? v.join("; ") : v ?? "").replace(/"/g, '""')}"`;
   const csv = [cols.join(",")]
     .concat(filtered().map((a) => cols.map((c) => q(a[c])).join(",")))
@@ -483,20 +455,6 @@ function bindEvents() {
       renderExplore(filtered());
     })
   );
-  $("#kpiPublishedCard").addEventListener("click", () => {
-    resetFilters(false);
-    state.filters.status.add("published");
-    const box = [...document.querySelectorAll('input[data-dim="status"]')].find((b) => b.value === "published");
-    if (box) box.checked = true;
-    switchView("explore");
-  });
-  $("#kpiReviewCard").addEventListener("click", () => {
-    resetFilters(false);
-    state.filters.status.add("needs_review");
-    const box = [...document.querySelectorAll('input[data-dim="status"]')].find((b) => b.value === "needs_review");
-    if (box) box.checked = true;
-    switchView("explore");
-  });
   $("#downloadCsv").addEventListener("click", exportCsv);
   $("#drawerClose").addEventListener("click", closeDrawer);
   $("#drawerBackdrop").addEventListener("click", closeDrawer);
