@@ -444,4 +444,5 @@ flowchart TB
 - [`README.md`](README.md) — setup, team how-to, deploy steps
 - [`AGENTS.md`](AGENTS.md) — agent/contributor conventions
 - [`sources/README.md`](sources/README.md) — federation YAML schema
+- [`TRACKER.md`](TRACKER.md) — remaining work, by priority
 - [`config/hub.yaml`](config/hub.yaml) — paths, vocabulary, ports
