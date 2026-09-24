@@ -41,6 +41,11 @@ METADATA_FIELDS = (
     "spatial_coverage",
     "temporal_coverage",
     "tags",
+    "category",
+    "owner_email",
+    "access_reason",
+    "embargo_until",
+    "contains_pii",
 )
 
 

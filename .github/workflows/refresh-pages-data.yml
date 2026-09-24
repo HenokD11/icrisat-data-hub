@@ -1,0 +1,49 @@
+name: Refresh catalogue app data
+
+# Regenerates docs/data/*.json (consumed by the public GitHub Pages dashboard)
+# whenever the YAML source pointers or the exporter change on main.
+#
+# In CI there is no SQLite catalogue, so `python -m hub.pages` re-filters the
+# already-published docs/data/assets.json (published + open only). The full
+# internal catalogue (data/catalog/assets.json) is never committed; the
+# deployed web app pushes docs/data after each publish (hub/sync.py).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sources/**"
+      - "src/hub/pages.py"
+      - ".github/workflows/refresh-pages-data.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write # push the regenerated docs/data commit back to main
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      # Only PyYAML is needed: the CI path reads assets.json + sources/*.yaml.
+      - run: pip install PyYAML
+
+      - name: Regenerate docs/data
+        run: PYTHONPATH=src python -m hub.pages
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data
+          if git diff --cached --quiet; then
+            echo "docs/data already up to date — nothing to commit"
+          else
+            git commit -m "chore: refresh catalogue app data [skip ci]"
+            git push
+          fi

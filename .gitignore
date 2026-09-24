@@ -15,3 +15,13 @@ data/catalog/catalog.db
 Thumbs.db
 desktop.ini
 .vscode/
+
+# Local tools (tunnel binary)
+tools/
+
+# e2e test output (regenerated each run)
+tests/artifacts/
+
+# Full internal catalogue export — never publish it (docs/data is the public copy)
+data/catalog/assets.json
+data/staging/

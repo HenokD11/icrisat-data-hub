@@ -68,7 +68,7 @@ def ingest_file(
 
     result: dict[str, Any] = {"file": file_path.name, "ok": False}
 
-    if file_path.name.lower() in IGNORED_NAMES:
+    if file_path.name.startswith(".") or file_path.name.lower() in IGNORED_NAMES:
         result["reason"] = "ignored"
         return result
 
@@ -95,9 +95,19 @@ def ingest_file(
 
     # Metadata: sidecar < web-form metadata < inference (first non-empty wins).
     metadata: dict[str, Any] = meta.infer_metadata(file_path, tables)
+    sidecar_exists = file_path.with_name(f"{file_path.stem}{meta.SIDECAR_SUFFIX}").exists()
     metadata.update(meta.load_sidecar_metadata(file_path))
     if extra_metadata:
         metadata.update({k: v for k, v in extra_metadata.items() if v})
+
+    # How the file arrived — powers the dashboard's upload-ease view.
+    if extra_metadata:
+        upload_channel = "web"
+    elif sidecar_exists:
+        upload_channel = "sidecar"
+    else:
+        upload_channel = "inbox"
+    metadata["upload_channel"] = upload_channel
 
     profiled = profile_tables(tables, cfg)
 
@@ -109,6 +119,10 @@ def ingest_file(
     )
     dest_dir.mkdir(parents=True, exist_ok=True)
     dest = dest_dir / file_path.name
+    n = 1
+    while dest.exists():  # same name, different content: never overwrite
+        dest = dest_dir / f"{file_path.stem}_{n}{file_path.suffix}"
+        n += 1
     if cfg.get("ingest", "after_ingest", default="move") == "move":
         shutil.move(str(file_path), dest)
     else:
@@ -117,7 +131,8 @@ def ingest_file(
     asset_record = {
         **metadata,
         "file_name": file_path.name,
-        "file_path": str(dest.relative_to(cfg.root)),
+        # HUB_DATA_DIR volumes live outside the project root -> keep absolute.
+        "file_path": str(dest.relative_to(cfg.root)) if dest.is_relative_to(cfg.root) else str(dest),
         "file_type": ftype,
         "file_ext": file_path.suffix.lower(),
         "size_bytes": dest.stat().st_size,
@@ -127,7 +142,8 @@ def ingest_file(
     asset_id = cat.add_asset(asset_record, profiled)
 
     asset = cat.get_asset(asset_id, with_tables=False)
-    if asset and asset["status"] == "needs_review":
+    if asset and asset["status"] == "needs_review" and upload_channel != "web":
+        # Drop-folder users complete metadata by editing this file; web users use the edit page.
         review_path = meta.write_review_template(asset, dest_dir)
         result["review_template"] = str(review_path)
 

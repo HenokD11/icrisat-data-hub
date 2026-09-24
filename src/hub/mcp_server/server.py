@@ -23,12 +23,21 @@ from typing import Any
 
 from mcp.server.mcpserver import MCPServer
 
+from ..access import effective_access
 from ..catalog import Catalog
 from ..config import HubConfig, load_config
 from ..ingest.readers import read_excel
 from ..sources import load_sources
 
 MAX_QUERY_ROWS = 1000
+
+# Which access levels MCP may expose. stdio runs on a machine that already
+# has the files; --http is reachable by others, so it only serves open data.
+VISIBLE_ACCESS = {"open", "internal", "restricted"}
+
+
+def _visible(asset: dict[str, Any] | None) -> bool:
+    return bool(asset) and asset.get("status") == "published" and effective_access(asset) in VISIBLE_ACCESS
 
 
 def _cfg() -> HubConfig:
@@ -54,7 +63,7 @@ def _slim(asset: dict[str, Any]) -> dict[str, Any]:
     keys = (
         "asset_id", "title", "description", "team", "owner", "file_name",
         "file_type", "status", "tags", "access", "domain",
-        "spatial_coverage", "temporal_coverage", "created_at",
+        "spatial_coverage", "temporal_coverage", "upload_channel", "created_at",
     )
     return {k: asset.get(k) for k in keys}
 
@@ -78,19 +87,19 @@ def list_assets(
     tag: str | None = None,
     limit: int = 50,
 ) -> list[dict[str, Any]]:
-    """List catalogued assets. Filter by status ('published'/'needs_review'),
-    team, file_type ('csv'/'excel'/'word'), or tag."""
+    """List published assets. Filter by team, file_type ('csv'/'excel'/'word'),
+    or tag. (status is accepted for compatibility; only published is served.)"""
     assets = _catalog().list_assets(
-        status=status, team=team, file_type=file_type, tag=tag, limit=limit
+        status="published", team=team, file_type=file_type, tag=tag, limit=100000
     )
-    return [_slim(a) for a in assets]
+    return [_slim(a) for a in assets if _visible(a)][:limit]
 
 
 @mcp.tool()
 def search_assets(query: str, limit: int = 25) -> list[dict[str, Any]]:
     """Search assets by keyword — matches title, description, team, tags,
     column names, and Word document text."""
-    return [_slim(a) for a in _catalog().search(query, limit=limit)]
+    return [_slim(a) for a in _catalog().search(query, limit=500) if _visible(a)][:limit]
 
 
 @mcp.tool()
@@ -98,9 +107,9 @@ def get_asset(asset_id: str) -> dict[str, Any]:
     """Get full metadata for one asset, including per-table/sheet schema
     (column names, dtypes, sample values) and any missing-metadata fields."""
     asset = _catalog().get_asset(asset_id)
-    if asset is None:
+    if not _visible(asset):
         return {"error": f"asset '{asset_id}' not found"}
-    return asset
+    return {k: v for k, v in asset.items() if k not in ("file_path", "owner_email")}
 
 
 @mcp.tool()
@@ -109,7 +118,7 @@ def preview_asset(asset_id: str, sheet: str | None = None, n: int = 10) -> dict[
     For Excel, pass a sheet name from get_asset's table list; defaults to first."""
     n = min(max(n, 1), 50)
     asset = _catalog().get_asset(asset_id, with_tables=False)
-    if asset is None:
+    if not _visible(asset):
         return {"error": f"asset '{asset_id}' not found"}
     if asset["file_type"] == "word":
         return {"error": "Word asset — use read_document instead"}
@@ -145,7 +154,7 @@ def query_asset(asset_id: str, sql: str, sheet: str | None = None) -> dict[str, 
     CSV, or the first Excel sheet). Results are capped at 1000 rows.
     Example: SELECT region, AVG(yield) FROM data GROUP BY region"""
     asset = _catalog().get_asset(asset_id, with_tables=False)
-    if asset is None:
+    if not _visible(asset):
         return {"error": f"asset '{asset_id}' not found"}
     if asset["file_type"] == "word":
         return {"error": "Word asset — use read_document instead"}
@@ -190,7 +199,7 @@ def query_asset(asset_id: str, sql: str, sheet: str | None = None) -> dict[str, 
 def read_document(asset_id: str, max_chars: int = 10000) -> dict[str, Any]:
     """Read the extracted text of a Word (.docx) asset."""
     asset = _catalog().get_asset(asset_id)
-    if asset is None:
+    if not _visible(asset):
         return {"error": f"asset '{asset_id}' not found"}
     if asset["file_type"] != "word":
         return {"error": "not a Word asset — use preview_asset/query_asset instead"}
@@ -218,9 +227,13 @@ def list_sources() -> list[dict[str, Any]]:
 
 @mcp.tool()
 def get_catalog_summary() -> dict[str, Any]:
-    """Portfolio-level statistics: asset counts by status, file type, team,
-    and access level."""
-    return _catalog().summary()
+    """Portfolio-level statistics over the published assets this server
+    exposes: counts by file type, team, category, and access level."""
+    from ..pages import _count_by
+
+    assets = [a for a in _catalog().list_assets(status="published", limit=100000) if _visible(a)]
+    return {"total_assets": len(assets), **{f"by_{k}": _count_by(assets, k)
+            for k in ("file_type", "team", "category", "access")}}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -232,6 +245,7 @@ def main(argv: list[str] | None = None) -> int:
 
     cfg = load_config()
     if args.http:
+        VISIBLE_ACCESS.intersection_update({"open"})
         host = args.host or cfg.get("mcp", "http_host", default="0.0.0.0")
         port = args.port or int(cfg.get("mcp", "http_port", default=8100))
         print(f"MCP (streamable HTTP) on http://{host}:{port}/mcp", flush=True)

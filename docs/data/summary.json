@@ -1,21 +1,23 @@
 {
-  "total_assets": 3,
-  "by_status": {
-    "needs_review": 2,
-    "published": 1
+  "total_assets": 0,
+  "by_status": {},
+  "by_file_type": {},
+  "by_team": {},
+  "by_access": {},
+  "needs_review": 0,
+  "hub": "ICRISAT Data Hub",
+  "generated_at": "2026-09-24T06:39:42+00:00",
+  "domain_definitions": {
+    "Hazard": "Climate variables and indices that characterise physical hazard (rainfall, temperature, drought, flood extent).",
+    "Hazard / Climate Services": "Operationally processed hazard products delivered as services (seasonal forecasts, advisories).",
+    "Exposure": "Data on agricultural systems, land use, populations, and assets exposed to climate hazards.",
+    "Sensitivity": "Data on how exposed systems respond to climate stressors (yield sensitivity, disease risk models).",
+    "Adaptive Capacity": "Data on the capacity of systems or communities to adjust to climate impacts.",
+    "Adaptation Analytics": "Integrated datasets and model outputs assessing adaptation options, impacts, or trade-offs.",
+    "Mitigation": "GHG inventories, emission factors, and tools for quantifying emission reductions in agriculture.",
+    "Soil / Agronomy": "Soil properties, fertility, and agronomic trial or recommendation datasets.",
+    "Socio-economics": "Household, market, and livelihood data used in targeting and impact analysis.",
+    "Multi-domain": "Assets that span two or more domains without a clear primary classification."
   },
-  "by_file_type": {
-    "word": 1,
-    "excel": 1,
-    "csv": 1
-  },
-  "by_team": {
-    "unspecified": 2,
-    "Soil Intelligence": 1
-  },
-  "by_access": {
-    "unspecified": 2,
-    "internal": 1
-  },
-  "needs_review": 2
+  "app_url": ""
 }

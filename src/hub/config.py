@@ -35,10 +35,19 @@ class HubConfig:
 
     # -- typed helpers -----------------------------------------------------
     def path(self, name: str) -> Path:
-        """Resolve a path defined under ``paths:`` against the project root."""
+        """Resolve a path defined under ``paths:`` against the project root.
+
+        When deployed (container), setting HUB_DATA_DIR remaps the local
+        working-state paths (data/...) onto the mounted volume so uploads and
+        the SQLite catalogue survive redeploys; repo content (config, sources)
+        stays in the image.
+        """
         value = self.get("paths", name)
         if value is None:
             raise KeyError(f"paths.{name} not defined in {CONFIG_PATH}")
+        data_dir = os.environ.get("HUB_DATA_DIR")
+        if data_dir and value.startswith("data/"):
+            return Path(data_dir) / Path(value).relative_to("data")
         p = Path(value)
         if not p.is_absolute():
             p = self.root / p
@@ -53,8 +62,9 @@ class HubConfig:
         return {e.lower() for e in self.get("ingest", "supported_extensions", default=[])}
 
     def ensure_dirs(self) -> None:
-        for name in ("inbox", "processed", "failed"):
-            self.path(name).mkdir(parents=True, exist_ok=True)
+        for name in ("inbox", "processed", "failed", "staging"):
+            if self.get("paths", name):
+                self.path(name).mkdir(parents=True, exist_ok=True)
         self.path("catalog_db").parent.mkdir(parents=True, exist_ok=True)
         self.path("catalog_json").parent.mkdir(parents=True, exist_ok=True)
         self.path("sources_dir").mkdir(parents=True, exist_ok=True)
@@ -62,7 +72,9 @@ class HubConfig:
 
 @lru_cache(maxsize=1)
 def load_config(path: str | os.PathLike[str] | None = None) -> HubConfig:
-    cfg_path = Path(path) if path else CONFIG_PATH
+    # HUB_CONFIG points a deployment (or the e2e test) at its own hub.yaml;
+    # the project root is then the folder containing that config/ dir.
+    cfg_path = Path(path or os.environ.get("HUB_CONFIG") or CONFIG_PATH)
     with open(cfg_path, "r", encoding="utf-8") as fh:
         raw = yaml.safe_load(fh) or {}
     cfg = HubConfig(raw, cfg_path.resolve().parents[1])

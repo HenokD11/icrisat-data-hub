@@ -1,0 +1,11 @@
+# Never ship local working state or tooling into the image
+.git
+.venv
+.pytest_cache
+tools
+data/inbox/*
+data/processed
+data/failed
+data/catalog/catalog.db
+__pycache__
+*.pyc
