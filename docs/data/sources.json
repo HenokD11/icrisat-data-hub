@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-24T06:39:42+00:00",
+  "generated_at": "2026-10-13T19:55:31+00:00",
   "n_sources": 2,
   "sources": [
     {
@@ -25,7 +25,7 @@
       "spatial_coverage": "Ethiopia",
       "temporal_coverage": "rolling seasonal forecasts",
       "auth_env_var": "ACLIMATE_API_KEY",
-      "source_file": "sources\\examples\\aclimate_api.yaml"
+      "source_file": "sources/examples/aclimate_api.yaml"
     },
     {
       "id": "chirps-rainfall-africa",
@@ -50,7 +50,7 @@
       ],
       "spatial_coverage": "Africa (quasi-global 50S-50N available)",
       "temporal_coverage": "1981-present",
-      "source_file": "sources\\examples\\chirps_rainfall.yaml"
+      "source_file": "sources/examples/chirps_rainfall.yaml"
     }
   ],
   "validation_problems": []
