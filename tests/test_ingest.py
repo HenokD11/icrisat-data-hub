@@ -53,7 +53,7 @@ def test_ingest_word_document(cfg, sample_docx):
     assert "Fertilizer Advisory Protocol" in doc["text_preview"]
 
 
-def test_sidecar_metadata_publishes(cfg, sample_csv):
+def test_sidecar_metadata_submits_for_review(cfg, sample_csv):
     sidecar = cfg.path("inbox") / "yield_trials_2025.meta.yaml"
     _drop(cfg, sample_csv)
     sidecar.write_text(
@@ -64,6 +64,7 @@ def test_sidecar_metadata_publishes(cfg, sample_csv):
                 "description": "Sorghum/teff/maize yield trials",
                 "license": "internal",
                 "access": "internal",
+                "category": "Soil & Agronomy",
                 "tags": ["yield", "trials"],
             }
         ),
@@ -72,7 +73,7 @@ def test_sidecar_metadata_publishes(cfg, sample_csv):
     cat = Catalog(cfg)
     results = scan_inbox(cfg, cat)
     res = next(r for r in results if r["file"] == sample_csv.name)
-    assert res["ok"] and res["status"] == "published", res
+    assert res["ok"] and res["status"] == "submitted", res  # a curator publishes
     asset = cat.get_asset(res["asset_id"])
     assert asset["team"] == "Soil Intelligence"
     assert asset["tags"] == ["yield", "trials"]
@@ -102,14 +103,15 @@ def test_review_template_completes_asset(cfg, sample_csv):
     template = next(cfg.path("processed").rglob("*_metadata_review.yaml"))
     values = yaml.safe_load(template.read_text(encoding="utf-8"))
     values.update(
-        {"team": "Ag Data", "owner": "Someone", "license": "internal", "access": "open"}
+        {"team": "Ag Data", "owner": "Someone", "license": "internal", "access": "open",
+         "category": "Other"}
     )
     template.write_text(yaml.safe_dump(values), encoding="utf-8")
 
     out = apply_review(template, cat)
     assert out["ok"]
     asset = cat.get_asset(res["asset_id"])
-    assert asset["status"] == "published"
+    assert asset["status"] == "submitted"
     assert asset["team"] == "Ag Data"
 
 
